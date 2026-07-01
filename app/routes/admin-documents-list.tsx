@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 import { AppShell } from "~/components/AppShell";
-import { ButtonLink } from "~/components/Button";
 import { GlassPanel } from "~/components/GlassPanel";
 import { requireAdmin } from "~/lib/auth.server";
 import { db, listAllDocuments } from "~/lib/db.server";
@@ -22,13 +21,8 @@ export default function AdminDocumentsList({ loaderData }: Route.ComponentProps)
   const { user, documents } = loaderData;
 
   return (
-    <AppShell title="Administrar documentos" user={user}>
-      <div className="mb-6 flex justify-end gap-3">
-        <ButtonLink to="/admin/categorias" variant="secondary">
-          Categorías
-        </ButtonLink>
-        <ButtonLink to="/admin/upload">Subir nuevo</ButtonLink>
-      </div>
+    <AppShell user={user}>
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Administrar documentos</h1>
 
       <GlassPanel className="divide-y divide-black/5 dark:divide-white/10">
         {documents.map((doc) => (

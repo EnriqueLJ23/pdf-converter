@@ -1,61 +1,113 @@
+import { useEffect, useState } from "react";
+import {
+  FileText,
+  FolderOpen,
+  LogOut,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Tags,
+  Upload,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { Link } from "react-router";
 import { ThemeToggle } from "./ThemeToggle";
 
+const NAV_LINK_CLASSES =
+  "flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-black/70 transition-colors hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/5";
+
 export function AppShell({
-  title,
   user,
-  backTo,
   children,
 }: {
-  title: string;
   user?: { name: string; isAdmin: boolean };
-  backTo?: string;
   children: ReactNode;
 }) {
-  return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-10 border-b border-black/5 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-black/50">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          {backTo ? (
-            <Link
-              to={backTo}
-              className="text-sm text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
-            >
-              ← Volver
-            </Link>
-          ) : (
-            <span className="text-lg font-semibold tracking-tight">{title}</span>
-          )}
+  const [collapsed, setCollapsed] = useState(false);
 
-          <div className="flex items-center gap-4">
-            {user && (
+  useEffect(() => {
+    setCollapsed(localStorage.getItem("sidebarCollapsed") === "true");
+  }, []);
+
+  function toggleCollapsed() {
+    const next = !collapsed;
+    setCollapsed(next);
+    localStorage.setItem("sidebarCollapsed", String(next));
+  }
+
+  return (
+    <div className="flex min-h-screen">
+      <aside
+        className={`flex shrink-0 flex-col justify-between border-r border-black/5 bg-white/70 backdrop-blur-xl transition-[width] dark:border-white/10 dark:bg-black/50 ${
+          collapsed ? "w-16" : "w-60"
+        }`}
+      >
+        <div>
+          <div className="flex items-center justify-between px-3 py-4">
+            {!collapsed && <span className="text-lg font-semibold tracking-tight">PDF Viewer</span>}
+            <button
+              type="button"
+              onClick={toggleCollapsed}
+              aria-label={collapsed ? "Expandir menú" : "Colapsar menú"}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-black/60 transition-colors hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/5"
+            >
+              {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+            </button>
+          </div>
+
+          <nav className="flex flex-col gap-1 px-2">
+            <Link to="/documentos" className={NAV_LINK_CLASSES} title="Documentos">
+              <FileText size={18} />
+              {!collapsed && <span>Documentos</span>}
+            </Link>
+
+            {user?.isAdmin && (
               <>
-                <span className="hidden text-sm text-black/60 sm:inline dark:text-white/50">
-                  {user.name}
-                </span>
-                {user.isAdmin && (
-                  <Link
-                    to="/admin/documentos"
-                    className="text-sm underline decoration-black/20 underline-offset-4 hover:decoration-black dark:decoration-white/20 dark:hover:decoration-white"
-                  >
-                    Panel admin
-                  </Link>
+                <div className="my-2 border-t border-black/5 dark:border-white/10" />
+                {!collapsed && (
+                  <span className="px-3 text-xs font-medium tracking-wide text-black/40 uppercase dark:text-white/30">
+                    Admin
+                  </span>
                 )}
-                <Link
-                  to="/logout"
-                  className="text-sm underline decoration-black/20 underline-offset-4 hover:decoration-black dark:decoration-white/20 dark:hover:decoration-white"
-                >
-                  Cerrar sesión
+                <Link to="/admin/upload" className={NAV_LINK_CLASSES} title="Subir documento">
+                  <Upload size={18} />
+                  {!collapsed && <span>Subir documento</span>}
+                </Link>
+                <Link to="/admin/documentos" className={NAV_LINK_CLASSES} title="Administrar documentos">
+                  <FolderOpen size={18} />
+                  {!collapsed && <span>Administrar documentos</span>}
+                </Link>
+                <Link to="/admin/categorias" className={NAV_LINK_CLASSES} title="Categorías">
+                  <Tags size={18} />
+                  {!collapsed && <span>Categorías</span>}
                 </Link>
               </>
             )}
-            <ThemeToggle />
-          </div>
+          </nav>
         </div>
-      </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-10">{children}</main>
+        {user && (
+          <div className="flex flex-col gap-2 border-t border-black/5 p-3 dark:border-white/10">
+            {!collapsed && (
+              <span className="truncate px-1 text-sm text-black/60 dark:text-white/50">{user.name}</span>
+            )}
+            <div className={`flex items-center gap-2 ${collapsed ? "flex-col" : ""}`}>
+              <ThemeToggle />
+              <Link
+                to="/logout"
+                aria-label="Cerrar sesión"
+                title="Cerrar sesión"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 text-black/70 transition-colors hover:bg-black/5 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/5"
+              >
+                <LogOut size={16} />
+              </Link>
+            </div>
+          </div>
+        )}
+      </aside>
+
+      <main className="flex-1 overflow-y-auto px-6 py-10 sm:px-10">
+        <div className="mx-auto max-w-5xl">{children}</div>
+      </main>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { data } from "react-router";
+import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { Link, data } from "react-router";
 import { AppShell } from "~/components/AppShell";
 import { GlassPanel } from "~/components/GlassPanel";
 import { requireUser } from "~/lib/auth.server";
@@ -18,14 +18,19 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   return { user, document: doc };
 }
 
-const navButtonClasses =
-  "absolute top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-black/10 bg-white/80 text-black/70 backdrop-blur-md transition-opacity hover:bg-white disabled:pointer-events-none disabled:opacity-0 dark:border-white/10 dark:bg-black/60 dark:text-white/70 dark:hover:bg-black/80";
+const MIN_ZOOM = 50;
+const MAX_ZOOM = 300;
+const ZOOM_STEP = 25;
+
+const toolbarButtonClasses =
+  "flex h-9 w-9 items-center justify-center rounded-full border border-black/10 text-black/70 transition-colors hover:bg-black/5 disabled:pointer-events-none disabled:opacity-30 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/5";
 
 export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
   // Renamed to `pdfDocument`: destructuring as `document` would shadow the
   // global `document` object needed below for the keydown listener.
   const { user, document: pdfDocument } = loaderData;
   const [page, setPage] = useState(1);
+  const [zoom, setZoom] = useState(100);
 
   useEffect(() => {
     function blockShortcuts(event: KeyboardEvent) {
@@ -38,17 +43,80 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
   }, []);
 
   return (
-    <AppShell title={pdfDocument.title} user={user} backTo="/documentos">
+    <AppShell user={user}>
+      <Link
+        to="/documentos"
+        className="mb-4 inline-block text-sm text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
+      >
+        ← Volver
+      </Link>
+
       <div className="select-none print:hidden" onContextMenu={(event) => event.preventDefault()}>
         <GlassPanel className="p-8">
           <h1 className="mb-4 text-xl font-semibold tracking-tight">{pdfDocument.title}</h1>
 
-          <div className="relative">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                aria-label="Página anterior"
+                className={toolbarButtonClasses}
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <span className="text-sm text-black/60 dark:text-white/50">
+                Página {page} de {pdfDocument.pageCount}
+              </span>
+              <button
+                type="button"
+                disabled={page >= pdfDocument.pageCount}
+                onClick={() => setPage((p) => Math.min(pdfDocument.pageCount, p + 1))}
+                aria-label="Página siguiente"
+                className={toolbarButtonClasses}
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                disabled={zoom <= MIN_ZOOM}
+                onClick={() => setZoom((z) => Math.max(MIN_ZOOM, z - ZOOM_STEP))}
+                aria-label="Reducir zoom"
+                className={toolbarButtonClasses}
+              >
+                <Minus size={18} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setZoom(100)}
+                title="Restablecer zoom"
+                className="w-14 text-center text-sm text-black/60 hover:text-black dark:text-white/50 dark:hover:text-white"
+              >
+                {zoom}%
+              </button>
+              <button
+                type="button"
+                disabled={zoom >= MAX_ZOOM}
+                onClick={() => setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP))}
+                aria-label="Aumentar zoom"
+                className={toolbarButtonClasses}
+              >
+                <Plus size={18} />
+              </button>
+            </div>
+          </div>
+
+          <div className="max-h-[75vh] overflow-auto rounded-lg border border-black/5 dark:border-white/10">
             <img
               src={`/documentos/${pdfDocument.id}/pagina/${page}`}
               alt={`Página ${page} de ${pdfDocument.title}`}
               draggable={false}
-              className="w-full select-none rounded-lg border border-black/5 dark:border-white/10"
+              className="select-none"
+              style={{ width: `${zoom}%` }}
             />
 
             {page < pdfDocument.pageCount && (
@@ -64,31 +132,6 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
                 className="hidden"
               />
             )}
-
-            <button
-              type="button"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              aria-label="Página anterior"
-              className={`${navButtonClasses} left-2`}
-            >
-              <ChevronLeft size={18} />
-            </button>
-            <button
-              type="button"
-              disabled={page >= pdfDocument.pageCount}
-              onClick={() => setPage((p) => Math.min(pdfDocument.pageCount, p + 1))}
-              aria-label="Página siguiente"
-              className={`${navButtonClasses} right-2`}
-            >
-              <ChevronRight size={18} />
-            </button>
-          </div>
-
-          <div className="mt-4 flex items-center justify-center">
-            <span className="text-sm text-black/60 dark:text-white/50">
-              Página {page} de {pdfDocument.pageCount}
-            </span>
           </div>
 
           <p className="mt-4 text-center text-xs text-black/40 dark:text-white/30">

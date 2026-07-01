@@ -17,7 +17,9 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
   const { user, documents, query } = loaderData;
 
   return (
-    <AppShell title="Documentos" user={user}>
+    <AppShell user={user}>
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Documentos</h1>
+
       <Form method="get" className="mb-6">
         <input
           type="search"

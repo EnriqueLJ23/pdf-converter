@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { Form, data, redirect, useNavigation } from "react-router";
+import { Form, Link, data, redirect, useNavigation } from "react-router";
 import { AppShell } from "~/components/AppShell";
 import { Button } from "~/components/Button";
 import { GlassPanel } from "~/components/GlassPanel";
@@ -58,7 +58,16 @@ export default function AdminDocumentEdit({ loaderData, actionData }: Route.Comp
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <AppShell title="Editar documento" user={user} backTo="/admin/documentos">
+    <AppShell user={user}>
+      <Link
+        to="/admin/documentos"
+        className="mb-4 inline-block text-sm text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
+      >
+        ← Volver
+      </Link>
+
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Editar documento</h1>
+
       <GlassPanel className="mx-auto max-w-xl p-8">
         {actionData?.error && (
           <p className="mb-4 rounded-lg bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400">

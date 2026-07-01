@@ -80,7 +80,7 @@ export default function AdminUpload({ loaderData, actionData }: Route.ComponentP
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <AppShell title="Subir documento" user={user}>
+    <AppShell user={user}>
       <GlassPanel className="mx-auto max-w-xl p-8">
         <h1 className="mb-6 text-xl font-semibold tracking-tight">Subir documento</h1>
 

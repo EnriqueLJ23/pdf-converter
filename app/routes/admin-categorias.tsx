@@ -39,7 +39,9 @@ export default function AdminCategorias({ loaderData, actionData }: Route.Compon
   const { user, categories } = loaderData;
 
   return (
-    <AppShell title="Categorías" user={user}>
+    <AppShell user={user}>
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Categorías</h1>
+
       <GlassPanel className="mx-auto mb-6 max-w-xl p-6">
         {actionData?.error && (
           <p className="mb-4 rounded-lg bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400">
