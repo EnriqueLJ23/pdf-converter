@@ -27,6 +27,8 @@ export interface DocumentRecord {
   createdAt: string;
   status: DocumentStatus;
   errorMessage: string | null;
+  categoryId: string | null;
+  categoryName: string | null;
 }
 
 interface UserRow {
@@ -52,6 +54,8 @@ interface DocumentRow {
   created_at: string;
   status: DocumentStatus;
   error_message: string | null;
+  category_id: string | null;
+  category_name: string | null;
 }
 
 export function createDb(filePath: string): Database.Database {
@@ -84,14 +88,29 @@ export function createDb(filePath: string): Database.Database {
       uploaded_by TEXT NOT NULL REFERENCES users(id),
       created_at TEXT NOT NULL,
       status TEXT NOT NULL,
-      error_message TEXT
+      error_message TEXT,
+      category_id TEXT REFERENCES categories(id) ON DELETE SET NULL
     );
   `);
+
+  const documentColumns = conn.prepare("PRAGMA table_info(documents)").all() as { name: string }[];
+  if (!documentColumns.some((col) => col.name === "category_id")) {
+    conn.exec(
+      "ALTER TABLE documents ADD COLUMN category_id TEXT REFERENCES categories(id) ON DELETE SET NULL",
+    );
+  }
+
   return conn;
 }
 
 const DATABASE_PATH = process.env.DATABASE_PATH ?? path.join(process.cwd(), "data", "app.db");
 export const db = createDb(DATABASE_PATH);
+
+const DOCUMENT_SELECT = `
+  SELECT documents.*, categories.name AS category_name
+  FROM documents
+  LEFT JOIN categories ON categories.id = documents.category_id
+`;
 
 function rowToUser(row: UserRow): UserRecord {
   return {
@@ -117,6 +136,8 @@ function rowToDocument(row: DocumentRow): DocumentRecord {
     createdAt: row.created_at,
     status: row.status,
     errorMessage: row.error_message,
+    categoryId: row.category_id,
+    categoryName: row.category_name,
   };
 }
 
@@ -167,13 +188,19 @@ export function deleteCategory(conn: Database.Database, id: string): void {
 
 export function createDocument(
   conn: Database.Database,
-  doc: { id: string; title: string; description: string | null; uploadedBy: string },
+  doc: {
+    id: string;
+    title: string;
+    description: string | null;
+    uploadedBy: string;
+    categoryId?: string | null;
+  },
 ): DocumentRecord {
   const now = new Date().toISOString();
   conn
     .prepare(
-      `INSERT INTO documents (id, title, description, page_count, uploaded_by, created_at, status, error_message)
-       VALUES (@id, @title, @description, 0, @uploadedBy, @createdAt, 'processing', NULL)`,
+      `INSERT INTO documents (id, title, description, page_count, uploaded_by, created_at, status, error_message, category_id)
+       VALUES (@id, @title, @description, 0, @uploadedBy, @createdAt, 'processing', NULL, @categoryId)`,
     )
     .run({
       id: doc.id,
@@ -181,10 +208,11 @@ export function createDocument(
       description: doc.description,
       uploadedBy: doc.uploadedBy,
       createdAt: now,
+      categoryId: doc.categoryId ?? null,
     });
 
   return rowToDocument(
-    conn.prepare("SELECT * FROM documents WHERE id = ?").get(doc.id) as DocumentRow,
+    conn.prepare(`${DOCUMENT_SELECT} WHERE documents.id = ?`).get(doc.id) as DocumentRow,
   );
 }
 
@@ -196,17 +224,35 @@ export function markDocumentError(conn: Database.Database, id: string, errorMess
   conn.prepare("UPDATE documents SET status = 'error', error_message = ? WHERE id = ?").run(errorMessage, id);
 }
 
+export function updateDocumentMetadata(
+  conn: Database.Database,
+  id: string,
+  metadata: { title: string; description: string | null; categoryId: string | null },
+): void {
+  conn
+    .prepare("UPDATE documents SET title = ?, description = ?, category_id = ? WHERE id = ?")
+    .run(metadata.title, metadata.description, metadata.categoryId, id);
+}
+
+export function deleteDocumentRecord(conn: Database.Database, id: string): void {
+  conn.prepare("DELETE FROM documents WHERE id = ?").run(id);
+}
+
 export function listReadyDocuments(conn: Database.Database): DocumentRecord[] {
-  return (conn.prepare("SELECT * FROM documents WHERE status = 'ready' ORDER BY created_at DESC").all() as DocumentRow[]).map(
-    rowToDocument,
-  );
+  return (
+    conn
+      .prepare(`${DOCUMENT_SELECT} WHERE documents.status = 'ready' ORDER BY documents.created_at DESC`)
+      .all() as DocumentRow[]
+  ).map(rowToDocument);
 }
 
 export function listAllDocuments(conn: Database.Database): DocumentRecord[] {
-  return (conn.prepare("SELECT * FROM documents ORDER BY created_at DESC").all() as DocumentRow[]).map(rowToDocument);
+  return (
+    conn.prepare(`${DOCUMENT_SELECT} ORDER BY documents.created_at DESC`).all() as DocumentRow[]
+  ).map(rowToDocument);
 }
 
 export function getDocumentById(conn: Database.Database, id: string): DocumentRecord | undefined {
-  const row = conn.prepare("SELECT * FROM documents WHERE id = ?").get(id) as DocumentRow | undefined;
+  const row = conn.prepare(`${DOCUMENT_SELECT} WHERE documents.id = ?`).get(id) as DocumentRow | undefined;
   return row ? rowToDocument(row) : undefined;
 }

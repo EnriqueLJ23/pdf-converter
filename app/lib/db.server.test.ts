@@ -4,12 +4,14 @@ import {
   createDb,
   createDocument,
   deleteCategory,
+  deleteDocumentRecord,
   getDocumentById,
   listAllDocuments,
   listCategories,
   listReadyDocuments,
   markDocumentError,
   markDocumentReady,
+  updateDocumentMetadata,
   upsertUser,
 } from "./db.server";
 
@@ -80,5 +82,57 @@ describe("db.server", () => {
     deleteCategory(db, "c1");
 
     expect(listCategories(db)).toHaveLength(0);
+  });
+
+  it("stores a document's category and updates metadata", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createCategory(db, { id: "c1", name: "Finanzas" });
+    createDocument(db, {
+      id: "d1",
+      title: "Nomina",
+      description: null,
+      uploadedBy: "u1",
+      categoryId: "c1",
+    });
+
+    const doc = getDocumentById(db, "d1");
+    expect(doc?.categoryId).toBe("c1");
+    expect(doc?.categoryName).toBe("Finanzas");
+
+    updateDocumentMetadata(db, "d1", {
+      title: "Nomina 2026",
+      description: "Actualizado",
+      categoryId: null,
+    });
+
+    const updated = getDocumentById(db, "d1");
+    expect(updated?.title).toBe("Nomina 2026");
+    expect(updated?.description).toBe("Actualizado");
+    expect(updated?.categoryId).toBeNull();
+  });
+
+  it("deletes a document record", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createDocument(db, { id: "d1", title: "Temporal", description: null, uploadedBy: "u1" });
+
+    deleteDocumentRecord(db, "d1");
+
+    expect(getDocumentById(db, "d1")).toBeUndefined();
+  });
+
+  it("leaves a document without a category when its category is deleted", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createCategory(db, { id: "c1", name: "Finanzas" });
+    createDocument(db, {
+      id: "d1",
+      title: "Nomina",
+      description: null,
+      uploadedBy: "u1",
+      categoryId: "c1",
+    });
+
+    deleteCategory(db, "c1");
+
+    expect(getDocumentById(db, "d1")?.categoryId).toBeNull();
   });
 });
