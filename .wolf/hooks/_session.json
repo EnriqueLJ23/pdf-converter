@@ -76,6 +76,11 @@
       "count": 1,
       "tokens": 14063,
       "first_read": "2026-07-01T14:49:46.133Z"
+    },
+    "C:/Users/JesúsEnriqueLunaJass/.ssh/config": {
+      "count": 1,
+      "tokens": 0,
+      "first_read": "2026-07-01T17:41:45.678Z"
     }
   },
   "files_written": [
@@ -318,6 +323,12 @@
       "action": "edit",
       "tokens": 27,
       "at": "2026-07-01T16:32:49.881Z"
+    },
+    {
+      "file": "C:/Users/JesúsEnriqueLunaJass/OneDrive - tq1.com.mx/Documents/DEV/pdf-converter/docker-compose.yml",
+      "action": "create",
+      "tokens": 144,
+      "at": "2026-07-01T17:12:26.119Z"
     }
   ],
   "edit_counts": {
@@ -347,11 +358,12 @@
     "app/app.css": 1,
     "app/routes/document-page-image.tsx": 1,
     "app/routes/home.tsx": 1,
-    "Dockerfile": 1
+    "Dockerfile": 1,
+    "docker-compose.yml": 1
   },
   "anatomy_hits": 13,
-  "anatomy_misses": 2,
+  "anatomy_misses": 3,
   "repeated_reads_warned": 3,
   "cerebrum_warnings": 0,
-  "stop_count": 7
+  "stop_count": 12
 }

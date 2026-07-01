@@ -1,13 +1,14 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-01T16:32:49.870Z
-> Files: 47 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-01T17:12:26.109Z
+> Files: 48 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ./
 
 - `.dockerignore` — Docker ignore rules (~12 tok)
 - `.gitignore` — Git ignore rules (~91 tok)
 - `CLAUDE.md` — OpenWolf (~57 tok)
+- `docker-compose.yml` — Docker Compose services (~144 tok)
 - `Dockerfile` — Docker container definition (~214 tok)
 - `package-lock.json` — npm lock file (~33618 tok)
 - `package.json` — Node.js package manifest (~260 tok)

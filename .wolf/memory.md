@@ -49,3 +49,9 @@
 | 10:31 | Created app/routes/home.tsx | — | ~103 |
 | 10:32 | Created Dockerfile | — | ~214 |
 | 10:32 | Edited .gitignore | 3→6 lines | ~26 |
+| 10:40 | Session end: 40 writes across 27 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 15 reads | ~49005 tok |
+| 11:12 | Created docker-compose.yml | — | ~144 |
+| 11:13 | Session end: 41 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 15 reads | ~49149 tok |
+| 11:43 | Session end: 41 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 16 reads | ~49149 tok |
+| 11:55 | Session end: 41 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 16 reads | ~49149 tok |
+| 12:22 | Session end: 41 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 16 reads | ~49149 tok |
