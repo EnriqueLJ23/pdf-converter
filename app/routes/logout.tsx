@@ -1,4 +1,6 @@
 import { Form, redirect } from "react-router";
+import { Button } from "~/components/Button";
+import { GlassPanel } from "~/components/GlassPanel";
 import { destroyUserSession, requireUser } from "~/lib/auth.server";
 import type { Route } from "./+types/logout";
 
@@ -16,13 +18,15 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function LogoutRoute() {
   return (
-    <main className="mx-auto max-w-md p-8">
-      <p className="mb-4">¿Seguro que quieres cerrar sesión?</p>
-      <Form method="post">
-        <button type="submit" className="rounded bg-gray-900 px-4 py-2 text-white">
-          Cerrar sesión
-        </button>
-      </Form>
-    </main>
+    <div className="flex min-h-screen items-center justify-center px-6">
+      <GlassPanel className="w-full max-w-sm p-8 text-center">
+        <p className="mb-6 text-black/70 dark:text-white/70">¿Seguro que quieres cerrar sesión?</p>
+        <Form method="post">
+          <Button type="submit" className="w-full">
+            Cerrar sesión
+          </Button>
+        </Form>
+      </GlassPanel>
+    </div>
   );
 }
