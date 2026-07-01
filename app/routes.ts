@@ -9,4 +9,5 @@ export default [
   route("admin/documentos", "routes/admin-documents-list.tsx"),
   route("documentos", "routes/documents-list.tsx"),
   route("documentos/:id", "routes/document-viewer.tsx"),
+  route("documentos/:id/pagina/:n", "routes/document-page-image.tsx"),
 ] satisfies RouteConfig;
