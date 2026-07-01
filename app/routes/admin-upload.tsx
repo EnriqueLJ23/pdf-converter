@@ -5,7 +5,7 @@ import { AppShell } from "~/components/AppShell";
 import { Button } from "~/components/Button";
 import { GlassPanel } from "~/components/GlassPanel";
 import { requireAdmin } from "~/lib/auth.server";
-import { createDocument, db, markDocumentError, markDocumentReady } from "~/lib/db.server";
+import { createDocument, db, listCategories, markDocumentError, markDocumentReady } from "~/lib/db.server";
 import { PdfConversionError, convertPdfToPages } from "~/lib/pdf-convert.server";
 import { ensureDocumentDirs, originalPdfPath } from "~/lib/storage.server";
 import type { Route } from "./+types/admin-upload";
@@ -14,7 +14,8 @@ const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_BYTES ?? 50 * 1024 * 1024
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireAdmin(request);
-  return { user };
+  const categories = listCategories(db);
+  return { user, categories };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -23,6 +24,7 @@ export async function action({ request }: Route.ActionArgs) {
 
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim() || null;
+  const categoryId = String(formData.get("categoryId") ?? "") || null;
   const file = formData.get("file");
 
   if (!title) {
@@ -43,7 +45,7 @@ export async function action({ request }: Route.ActionArgs) {
   const documentId = randomUUID();
   ensureDocumentDirs(documentId);
   fs.writeFileSync(originalPdfPath(documentId), fileBytes);
-  createDocument(db, { id: documentId, title, description, uploadedBy: user.id });
+  createDocument(db, { id: documentId, title, description, uploadedBy: user.id, categoryId });
 
   try {
     const pageCount = await convertPdfToPages(documentId);
@@ -62,7 +64,7 @@ const inputClasses =
   "rounded-lg border border-black/10 bg-black/[0.03] p-2 text-sm outline-none focus:ring-2 focus:ring-accent-500 dark:border-white/10 dark:bg-white/[0.05]";
 
 export default function AdminUpload({ loaderData, actionData }: Route.ComponentProps) {
-  const { user } = loaderData;
+  const { user, categories } = loaderData;
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
@@ -85,6 +87,17 @@ export default function AdminUpload({ loaderData, actionData }: Route.ComponentP
           <label className="flex flex-col gap-1 text-sm">
             Descripción (opcional)
             <textarea name="description" className={inputClasses} />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            Categoría (opcional)
+            <select name="categoryId" defaultValue="" className={inputClasses}>
+              <option value="">Sin categoría</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="flex flex-col gap-1 text-sm">
             Archivo PDF
