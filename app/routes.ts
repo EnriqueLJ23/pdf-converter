@@ -6,4 +6,5 @@ export default [
   route("auth/callback", "routes/auth-callback.tsx"),
   route("logout", "routes/logout.tsx"),
   route("admin/upload", "routes/admin-upload.tsx"),
+  route("admin/documentos", "routes/admin-documents-list.tsx"),
 ] satisfies RouteConfig;
