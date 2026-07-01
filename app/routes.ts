@@ -8,4 +8,5 @@ export default [
   route("admin/upload", "routes/admin-upload.tsx"),
   route("admin/documentos", "routes/admin-documents-list.tsx"),
   route("documentos", "routes/documents-list.tsx"),
+  route("documentos/:id", "routes/document-viewer.tsx"),
 ] satisfies RouteConfig;

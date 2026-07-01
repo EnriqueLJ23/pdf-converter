@@ -13,3 +13,9 @@ body {
     color-scheme: dark;
   }
 }
+
+@media print {
+  body {
+    display: none;
+  }
+}
