@@ -77,7 +77,19 @@ export async function completeLogin(
   }
 
   const config = await getOidcConfig();
-  const tokens = await client.authorizationCodeGrant(config, new URL(request.url), {
+
+  // Rebuild the callback URL from APP_BASE_URL rather than trusting
+  // request.url's scheme/host: behind a TLS-terminating reverse proxy, the
+  // app sees the proxy's internal http:// request, which would make
+  // openid-client derive a redirect_uri that doesn't match the https://
+  // one used in beginLogin(), and Entra ID rejects the mismatch
+  // (AADSTS500112).
+  const incomingUrl = new URL(request.url);
+  const callbackUrl = new URL(
+    `${requireEnv("APP_BASE_URL")}${incomingUrl.pathname}${incomingUrl.search}`,
+  );
+
+  const tokens = await client.authorizationCodeGrant(config, callbackUrl, {
     pkceCodeVerifier: handshake.codeVerifier,
     expectedState: handshake.state,
   });
