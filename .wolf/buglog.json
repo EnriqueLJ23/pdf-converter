@@ -1,4 +1,21 @@
 {
   "version": 1,
-  "bugs": []
+  "bugs": [
+    {
+      "id": "bug-001",
+      "timestamp": "2026-07-01T15:19:10.370Z",
+      "error_message": "Significant refactor of ",
+      "file": "app/routes.ts",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 3→8 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-01T15:19:10.370Z"
+    }
+  ]
 }

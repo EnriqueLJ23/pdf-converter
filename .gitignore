@@ -6,6 +6,9 @@
 /.react-router/
 /build/
 
+# Local SQLite DB and uploaded PDFs/page images
+/data/
+
 # OpenWolf local runtime state (churns every session, contains local paths)
 .wolf/daemon.log
 .wolf/token-ledger.json
