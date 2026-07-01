@@ -7,4 +7,5 @@ export default [
   route("logout", "routes/logout.tsx"),
   route("admin/upload", "routes/admin-upload.tsx"),
   route("admin/documentos", "routes/admin-documents-list.tsx"),
+  route("documentos", "routes/documents-list.tsx"),
 ] satisfies RouteConfig;
