@@ -102,6 +102,16 @@ export async function completeLogin(
   const adminGroupId = requireEnv("ENTRA_ADMIN_GROUP_ID");
   const groups = Array.isArray(claims.groups) ? (claims.groups as string[]) : [];
 
+  // TEMPORARY diagnostic log — remove once the admin group mismatch is root-caused.
+  console.log(
+    "[auth debug] adminGroupId env:",
+    JSON.stringify(adminGroupId),
+    "claims.groups:",
+    JSON.stringify(claims.groups),
+    "_claim_names:",
+    JSON.stringify((claims as Record<string, unknown>)._claim_names),
+  );
+
   const user = upsertUser(db, {
     id: String(claims.sub),
     email: String(claims.email ?? claims.preferred_username ?? ""),
