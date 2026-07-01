@@ -1,0 +1,19 @@
+services:
+  pdf-viewer:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - pdf-viewer-data:/data
+    environment:
+      ENTRA_TENANT_ID: ${ENTRA_TENANT_ID}
+      ENTRA_CLIENT_ID: ${ENTRA_CLIENT_ID}
+      ENTRA_CLIENT_SECRET: ${ENTRA_CLIENT_SECRET}
+      ENTRA_ADMIN_GROUP_ID: ${ENTRA_ADMIN_GROUP_ID}
+      SESSION_SECRET: ${SESSION_SECRET}
+      APP_BASE_URL: ${APP_BASE_URL}
+      MAX_UPLOAD_BYTES: ${MAX_UPLOAD_BYTES:-52428800}
+
+volumes:
+  pdf-viewer-data:
