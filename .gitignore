@@ -1,0 +1,15 @@
+.DS_Store
+.env
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+
+# OpenWolf local runtime state (churns every session, contains local paths)
+.wolf/daemon.log
+.wolf/token-ledger.json
+.wolf/cron-state.json
+.wolf/suggestions.json
+.wolf/designqc-report.json
+.wolf/designqc-captures/
