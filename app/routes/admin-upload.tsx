@@ -1,6 +1,9 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import { Form, data, redirect, useNavigation } from "react-router";
+import { AppShell } from "~/components/AppShell";
+import { Button } from "~/components/Button";
+import { GlassPanel } from "~/components/GlassPanel";
 import { requireAdmin } from "~/lib/auth.server";
 import { createDocument, db, markDocumentError, markDocumentReady } from "~/lib/db.server";
 import { PdfConversionError, convertPdfToPages } from "~/lib/pdf-convert.server";
@@ -10,8 +13,8 @@ import type { Route } from "./+types/admin-upload";
 const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_BYTES ?? 50 * 1024 * 1024);
 
 export async function loader({ request }: Route.LoaderArgs) {
-  await requireAdmin(request);
-  return null;
+  const user = await requireAdmin(request);
+  return { user };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -55,39 +58,43 @@ export async function action({ request }: Route.ActionArgs) {
   return redirect("/admin/documentos?success=1");
 }
 
-export default function AdminUpload({ actionData }: Route.ComponentProps) {
+const inputClasses =
+  "rounded-lg border border-black/10 bg-black/[0.03] p-2 text-sm outline-none focus:ring-2 focus:ring-accent-500 dark:border-white/10 dark:bg-white/[0.05]";
+
+export default function AdminUpload({ loaderData, actionData }: Route.ComponentProps) {
+  const { user } = loaderData;
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
 
   return (
-    <main className="mx-auto max-w-xl p-8">
-      <h1 className="mb-6 text-2xl font-semibold">Subir documento</h1>
+    <AppShell title="Subir documento" user={user}>
+      <GlassPanel className="mx-auto max-w-xl p-8">
+        <h1 className="mb-6 text-xl font-semibold tracking-tight">Subir documento</h1>
 
-      {actionData?.error && (
-        <p className="mb-4 rounded bg-red-50 p-3 text-red-700">{actionData.error}</p>
-      )}
+        {actionData?.error && (
+          <p className="mb-4 rounded-lg bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400">
+            {actionData.error}
+          </p>
+        )}
 
-      <Form method="post" encType="multipart/form-data" className="flex flex-col gap-4">
-        <label className="flex flex-col gap-1">
-          Título
-          <input type="text" name="title" required className="rounded border p-2" />
-        </label>
-        <label className="flex flex-col gap-1">
-          Descripción (opcional)
-          <textarea name="description" className="rounded border p-2" />
-        </label>
-        <label className="flex flex-col gap-1">
-          Archivo PDF
-          <input type="file" name="file" accept="application/pdf" required className="rounded border p-2" />
-        </label>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded bg-gray-900 px-4 py-2 text-white disabled:opacity-50"
-        >
-          {isSubmitting ? "Subiendo..." : "Subir"}
-        </button>
-      </Form>
-    </main>
+        <Form method="post" encType="multipart/form-data" className="flex flex-col gap-4">
+          <label className="flex flex-col gap-1 text-sm">
+            Título
+            <input type="text" name="title" required className={inputClasses} />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            Descripción (opcional)
+            <textarea name="description" className={inputClasses} />
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            Archivo PDF
+            <input type="file" name="file" accept="application/pdf" required className={inputClasses} />
+          </label>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Subiendo..." : "Subir"}
+          </Button>
+        </Form>
+      </GlassPanel>
+    </AppShell>
   );
 }
