@@ -10,7 +10,11 @@ import {
   listCategories,
   listReadyDocuments,
   markDocumentError,
+  markDocumentIndexFailed,
+  markDocumentIndexed,
   markDocumentReady,
+  searchReadyDocuments,
+  syncDocumentFts,
   updateDocumentMetadata,
   upsertUser,
 } from "./db.server";
@@ -19,7 +23,7 @@ describe("db.server", () => {
   const db = createDb(":memory:");
 
   beforeEach(() => {
-    db.exec("DELETE FROM documents; DELETE FROM users; DELETE FROM categories;");
+    db.exec("DELETE FROM documents; DELETE FROM users; DELETE FROM categories; DELETE FROM documents_fts;");
   });
 
   it("upserts a user, updating fields on repeat login", () => {
@@ -134,5 +138,55 @@ describe("db.server", () => {
     deleteCategory(db, "c1");
 
     expect(getDocumentById(db, "d1")?.categoryId).toBeNull();
+  });
+
+  it("indexes a document's text and finds it via full-text search", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createDocument(db, { id: "d1", title: "Contrato", description: null, uploadedBy: "u1" });
+    markDocumentReady(db, "d1", 1);
+    syncDocumentFts(db, "d1");
+
+    expect(searchReadyDocuments(db, "arrendamiento")).toHaveLength(0);
+
+    markDocumentIndexed(db, "d1", {
+      extractedText: "Contrato de arrendamiento de un inmueble en la ciudad",
+      keywords: ["contrato", "arrendamiento", "inmueble"],
+    });
+    syncDocumentFts(db, "d1");
+
+    const results = searchReadyDocuments(db, "arrendamiento");
+    expect(results).toHaveLength(1);
+    expect(results[0].id).toBe("d1");
+    expect(results[0].keywords).toEqual(["contrato", "arrendamiento", "inmueble"]);
+    expect(results[0].indexStatus).toBe("indexed");
+  });
+
+  it("does not return documents that are not status='ready' from search", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createDocument(db, { id: "d2", title: "Procesando", description: null, uploadedBy: "u1" });
+    syncDocumentFts(db, "d2");
+    markDocumentIndexed(db, "d2", { extractedText: "contenido de prueba", keywords: ["prueba"] });
+    syncDocumentFts(db, "d2");
+
+    expect(searchReadyDocuments(db, "prueba")).toHaveLength(0);
+  });
+
+  it("marks a document's index as failed", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createDocument(db, { id: "d3", title: "Roto", description: null, uploadedBy: "u1" });
+
+    markDocumentIndexFailed(db, "d3");
+
+    expect(getDocumentById(db, "d3")?.indexStatus).toBe("failed");
+  });
+
+  it("sanitizes special FTS5 syntax characters in the search query without throwing", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createDocument(db, { id: "d4", title: "Documento normal", description: null, uploadedBy: "u1" });
+    markDocumentReady(db, "d4", 1);
+    syncDocumentFts(db, "d4");
+
+    expect(() => searchReadyDocuments(db, '"unclosed AND OR* NEAR()')).not.toThrow();
+    expect(searchReadyDocuments(db, '"unclosed AND OR* NEAR()')).toHaveLength(0);
   });
 });

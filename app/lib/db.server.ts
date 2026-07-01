@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export type DocumentStatus = "processing" | "ready" | "error";
+export type IndexStatus = "pending" | "indexed" | "failed";
 
 export interface UserRecord {
   id: string;
@@ -29,6 +30,8 @@ export interface DocumentRecord {
   errorMessage: string | null;
   categoryId: string | null;
   categoryName: string | null;
+  indexStatus: IndexStatus;
+  keywords: string[];
 }
 
 interface UserRow {
@@ -56,6 +59,8 @@ interface DocumentRow {
   error_message: string | null;
   category_id: string | null;
   category_name: string | null;
+  index_status: IndexStatus;
+  keywords: string | null;
 }
 
 export function createDb(filePath: string): Database.Database {
@@ -89,15 +94,37 @@ export function createDb(filePath: string): Database.Database {
       created_at TEXT NOT NULL,
       status TEXT NOT NULL,
       error_message TEXT,
-      category_id TEXT REFERENCES categories(id) ON DELETE SET NULL
+      category_id TEXT REFERENCES categories(id) ON DELETE SET NULL,
+      extracted_text TEXT,
+      keywords TEXT,
+      index_status TEXT NOT NULL DEFAULT 'pending'
+    );
+
+    CREATE VIRTUAL TABLE IF NOT EXISTS documents_fts USING fts5(
+      document_id UNINDEXED,
+      title,
+      description,
+      extracted_text,
+      keywords
     );
   `);
 
   const documentColumns = conn.prepare("PRAGMA table_info(documents)").all() as { name: string }[];
-  if (!documentColumns.some((col) => col.name === "category_id")) {
+  const existingColumnNames = new Set(documentColumns.map((col) => col.name));
+
+  if (!existingColumnNames.has("category_id")) {
     conn.exec(
       "ALTER TABLE documents ADD COLUMN category_id TEXT REFERENCES categories(id) ON DELETE SET NULL",
     );
+  }
+  if (!existingColumnNames.has("extracted_text")) {
+    conn.exec("ALTER TABLE documents ADD COLUMN extracted_text TEXT");
+  }
+  if (!existingColumnNames.has("keywords")) {
+    conn.exec("ALTER TABLE documents ADD COLUMN keywords TEXT");
+  }
+  if (!existingColumnNames.has("index_status")) {
+    conn.exec("ALTER TABLE documents ADD COLUMN index_status TEXT NOT NULL DEFAULT 'pending'");
   }
 
   return conn;
@@ -138,6 +165,8 @@ function rowToDocument(row: DocumentRow): DocumentRecord {
     errorMessage: row.error_message,
     categoryId: row.category_id,
     categoryName: row.category_name,
+    indexStatus: row.index_status,
+    keywords: row.keywords ? row.keywords.split(", ").filter(Boolean) : [],
   };
 }
 
@@ -236,6 +265,59 @@ export function updateDocumentMetadata(
 
 export function deleteDocumentRecord(conn: Database.Database, id: string): void {
   conn.prepare("DELETE FROM documents WHERE id = ?").run(id);
+}
+
+export function markDocumentIndexed(
+  conn: Database.Database,
+  id: string,
+  data: { extractedText: string; keywords: string[] },
+): void {
+  conn
+    .prepare("UPDATE documents SET extracted_text = ?, keywords = ?, index_status = 'indexed' WHERE id = ?")
+    .run(data.extractedText, data.keywords.join(", "), id);
+}
+
+export function markDocumentIndexFailed(conn: Database.Database, id: string): void {
+  conn.prepare("UPDATE documents SET index_status = 'failed' WHERE id = ?").run(id);
+}
+
+export function syncDocumentFts(conn: Database.Database, id: string): void {
+  const row = conn
+    .prepare("SELECT title, description, extracted_text, keywords FROM documents WHERE id = ?")
+    .get(id) as
+    | { title: string; description: string | null; extracted_text: string | null; keywords: string | null }
+    | undefined;
+  if (!row) return;
+
+  conn.prepare("DELETE FROM documents_fts WHERE document_id = ?").run(id);
+  conn
+    .prepare(
+      "INSERT INTO documents_fts (document_id, title, description, extracted_text, keywords) VALUES (?, ?, ?, ?, ?)",
+    )
+    .run(id, row.title, row.description ?? "", row.extracted_text ?? "", row.keywords ?? "");
+}
+
+function sanitizeFtsQuery(query: string): string {
+  const terms = query
+    .split(/\s+/)
+    .filter((term) => term.length > 0)
+    .map((term) => `"${term.replace(/"/g, '""')}"`);
+  return terms.length > 0 ? terms.join(" ") : '""';
+}
+
+export function searchReadyDocuments(conn: Database.Database, query: string): DocumentRecord[] {
+  const ftsQuery = sanitizeFtsQuery(query);
+  const rows = conn
+    .prepare(
+      `SELECT documents.*, categories.name AS category_name
+       FROM documents_fts
+       JOIN documents ON documents.id = documents_fts.document_id
+       LEFT JOIN categories ON categories.id = documents.category_id
+       WHERE documents_fts MATCH ? AND documents.status = 'ready'
+       ORDER BY bm25(documents_fts)`,
+    )
+    .all(ftsQuery) as DocumentRow[];
+  return rows.map(rowToDocument);
 }
 
 export function listReadyDocuments(conn: Database.Database): DocumentRecord[] {
