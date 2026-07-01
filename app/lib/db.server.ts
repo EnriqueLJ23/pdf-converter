@@ -12,6 +12,12 @@ export interface UserRecord {
   lastLoginAt: string;
 }
 
+export interface CategoryRecord {
+  id: string;
+  name: string;
+  createdAt: string;
+}
+
 export interface DocumentRecord {
   id: string;
   title: string;
@@ -31,6 +37,12 @@ interface UserRow {
   last_login_at: string;
 }
 
+interface CategoryRow {
+  id: string;
+  name: string;
+  created_at: string;
+}
+
 interface DocumentRow {
   id: string;
   title: string;
@@ -48,6 +60,7 @@ export function createDb(filePath: string): Database.Database {
   }
   const conn = new Database(filePath);
   conn.pragma("journal_mode = WAL");
+  conn.pragma("foreign_keys = ON");
   conn.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -55,6 +68,12 @@ export function createDb(filePath: string): Database.Database {
       name TEXT NOT NULL,
       is_admin INTEGER NOT NULL,
       last_login_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS categories (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL UNIQUE,
+      created_at TEXT NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS documents (
@@ -82,6 +101,10 @@ function rowToUser(row: UserRow): UserRecord {
     isAdmin: !!row.is_admin,
     lastLoginAt: row.last_login_at,
   };
+}
+
+function rowToCategory(row: CategoryRow): CategoryRecord {
+  return { id: row.id, name: row.name, createdAt: row.created_at };
 }
 
 function rowToDocument(row: DocumentRow): DocumentRecord {
@@ -121,6 +144,25 @@ export function upsertUser(
     });
 
   return rowToUser(conn.prepare("SELECT * FROM users WHERE id = ?").get(user.id) as UserRow);
+}
+
+export function createCategory(
+  conn: Database.Database,
+  category: { id: string; name: string },
+): CategoryRecord {
+  const now = new Date().toISOString();
+  conn
+    .prepare("INSERT INTO categories (id, name, created_at) VALUES (?, ?, ?)")
+    .run(category.id, category.name, now);
+  return rowToCategory(conn.prepare("SELECT * FROM categories WHERE id = ?").get(category.id) as CategoryRow);
+}
+
+export function listCategories(conn: Database.Database): CategoryRecord[] {
+  return (conn.prepare("SELECT * FROM categories ORDER BY name ASC").all() as CategoryRow[]).map(rowToCategory);
+}
+
+export function deleteCategory(conn: Database.Database, id: string): void {
+  conn.prepare("DELETE FROM categories WHERE id = ?").run(id);
 }
 
 export function createDocument(

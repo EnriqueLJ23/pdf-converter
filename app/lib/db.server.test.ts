@@ -1,9 +1,12 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import {
+  createCategory,
   createDb,
   createDocument,
+  deleteCategory,
   getDocumentById,
   listAllDocuments,
+  listCategories,
   listReadyDocuments,
   markDocumentError,
   markDocumentReady,
@@ -14,7 +17,7 @@ describe("db.server", () => {
   const db = createDb(":memory:");
 
   beforeEach(() => {
-    db.exec("DELETE FROM documents; DELETE FROM users;");
+    db.exec("DELETE FROM documents; DELETE FROM users; DELETE FROM categories;");
   });
 
   it("upserts a user, updating fields on repeat login", () => {
@@ -61,5 +64,21 @@ describe("db.server", () => {
     expect(doc?.errorMessage).toBe("pdftoppm failed: corrupt file");
     expect(listReadyDocuments(db)).toHaveLength(0);
     expect(listAllDocuments(db)).toHaveLength(1);
+  });
+
+  it("creates and lists categories alphabetically", () => {
+    createCategory(db, { id: "c2", name: "Recursos Humanos" });
+    createCategory(db, { id: "c1", name: "Finanzas" });
+
+    const categories = listCategories(db);
+
+    expect(categories.map((c) => c.name)).toEqual(["Finanzas", "Recursos Humanos"]);
+  });
+
+  it("deletes a category", () => {
+    createCategory(db, { id: "c1", name: "Finanzas" });
+    deleteCategory(db, "c1");
+
+    expect(listCategories(db)).toHaveLength(0);
   });
 });
