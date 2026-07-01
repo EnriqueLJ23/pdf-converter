@@ -5,7 +5,8 @@ import { AppShell } from "~/components/AppShell";
 import { Button } from "~/components/Button";
 import { GlassPanel } from "~/components/GlassPanel";
 import { requireAdmin } from "~/lib/auth.server";
-import { createDocument, db, listCategories, markDocumentError, markDocumentReady } from "~/lib/db.server";
+import { createDocument, db, listCategories, markDocumentError, markDocumentReady, syncDocumentFts } from "~/lib/db.server";
+import { indexDocumentText } from "~/lib/index-document.server";
 import { PdfConversionError, convertPdfToPages } from "~/lib/pdf-convert.server";
 import { ensureDocumentDirs, originalPdfPath } from "~/lib/storage.server";
 import type { Route } from "./+types/admin-upload";
@@ -46,6 +47,7 @@ export async function action({ request }: Route.ActionArgs) {
   ensureDocumentDirs(documentId);
   fs.writeFileSync(originalPdfPath(documentId), fileBytes);
   createDocument(db, { id: documentId, title, description, uploadedBy: user.id, categoryId });
+  syncDocumentFts(db, documentId);
 
   try {
     const pageCount = await convertPdfToPages(documentId);
@@ -56,6 +58,15 @@ export async function action({ request }: Route.ActionArgs) {
     markDocumentError(db, documentId, message);
     return redirect("/admin/documentos?error=conversion");
   }
+
+  // Deliberately not awaited: text extraction (with a possible OCR fallback)
+  // can take several seconds per page, and must not delay this response.
+  // indexDocumentText() already catches its own errors internally, but this
+  // .catch() is a second safety net against an unhandled rejection ever
+  // reaching the Node process and crashing the server.
+  indexDocumentText(documentId).catch((error: unknown) => {
+    console.error(`Unexpected error indexing document ${documentId}`, error);
+  });
 
   return redirect("/admin/documentos?success=1");
 }
