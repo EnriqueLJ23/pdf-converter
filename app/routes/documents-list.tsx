@@ -4,8 +4,9 @@ import { AppShell } from "~/components/AppShell";
 import { DocumentThumbnail } from "~/components/DocumentThumbnail";
 import { requireUser } from "~/lib/auth.server";
 import { db, listReadyDocuments, searchReadyDocuments } from "~/lib/db.server";
-import type { DocumentSuggestion } from "~/lib/db.server";
+import type { DocumentRecord, DocumentSuggestion } from "~/lib/db.server";
 import { t } from "~/lib/i18n";
+import type { Language } from "~/lib/i18n";
 import { getLanguage } from "~/lib/language.server";
 import type { Route } from "./+types/documents-list";
 
@@ -17,8 +18,57 @@ export async function loader({ request }: Route.LoaderArgs) {
   return { user, documents, query, language };
 }
 
+function groupByCategory(documents: DocumentRecord[]) {
+  const byCategory = new Map<string, { name: string; documents: DocumentRecord[] }>();
+  const uncategorized: DocumentRecord[] = [];
+
+  for (const doc of documents) {
+    if (!doc.categoryId || !doc.categoryName) {
+      uncategorized.push(doc);
+      continue;
+    }
+    if (!byCategory.has(doc.categoryId)) {
+      byCategory.set(doc.categoryId, { name: doc.categoryName, documents: [] });
+    }
+    byCategory.get(doc.categoryId)!.documents.push(doc);
+  }
+
+  const sections = Array.from(byCategory.entries())
+    .map(([id, group]) => ({ id, name: group.name, documents: group.documents }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  return { sections, uncategorized };
+}
+
+function DocumentCard({ doc, language }: { doc: DocumentRecord; language: Language }) {
+  return (
+    <Link
+      to={`/documentos/${doc.id}`}
+      className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-white/70 p-3 shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_16px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_8px_30px_rgba(0,0,0,0.5)]"
+    >
+      <DocumentThumbnail />
+
+      <p className="line-clamp-2 text-sm font-medium leading-snug tracking-tight">{doc.title}</p>
+
+      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+        {doc.categoryName && (
+          <span className="rounded-full bg-accent-500/10 px-2 py-0.5 text-[11px] font-medium text-accent-600 dark:text-accent-400">
+            {doc.categoryName}
+          </span>
+        )}
+      </div>
+
+      <p className="mt-auto pt-2 text-xs text-black/40 dark:text-white/30">
+        {doc.pageCount}{" "}
+        {doc.pageCount === 1 ? t(language, "common.pageSingular") : t(language, "common.pagePlural")}
+      </p>
+    </Link>
+  );
+}
+
 export default function DocumentsList({ loaderData }: Route.ComponentProps) {
   const { user, documents, query, language } = loaderData;
+  const { sections, uncategorized } = groupByCategory(documents);
   const [inputValue, setInputValue] = useState(query);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsFetcher = useFetcher<{ suggestions: DocumentSuggestion[] }>();
@@ -102,33 +152,38 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
             ? t(language, "documents.emptyQuery").replace("{query}", query)
             : t(language, "documents.emptyNoQuery")}
         </p>
-      ) : (
+      ) : query ? (
+        // Actively searching: a flat list ranked by relevance (bm25) reads
+        // better than splitting the strongest matches across sections.
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {documents.map((doc) => (
-            <Link
-              key={doc.id}
-              to={`/documentos/${doc.id}`}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-white/70 p-3 shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_16px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_8px_30px_rgba(0,0,0,0.5)]"
-            >
-              <DocumentThumbnail />
-
-              <p className="line-clamp-2 text-sm font-medium leading-snug tracking-tight">{doc.title}</p>
-
-              <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                {doc.categoryName && (
-                  <span className="rounded-full bg-accent-500/10 px-2 py-0.5 text-[11px] font-medium text-accent-600 dark:text-accent-400">
-                    {doc.categoryName}
-                  </span>
-                )}
-              </div>
-
-              <p className="mt-auto pt-2 text-xs text-black/40 dark:text-white/30">
-                {doc.pageCount}{" "}
-                {doc.pageCount === 1 ? t(language, "common.pageSingular") : t(language, "common.pagePlural")}
-              </p>
-            </Link>
+            <DocumentCard key={doc.id} doc={doc} language={language} />
           ))}
         </div>
+      ) : (
+        <>
+          {sections.map((section) => (
+            <div key={section.id} className="mb-8">
+              <h2 className="mb-3 text-lg font-semibold tracking-tight">{section.name}</h2>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {section.documents.map((doc) => (
+                  <DocumentCard key={doc.id} doc={doc} language={language} />
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {uncategorized.length > 0 && (
+            <div className="mb-8">
+              <h2 className="mb-3 text-lg font-semibold tracking-tight">{t(language, "upload.noCategory")}</h2>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {uncategorized.map((doc) => (
+                  <DocumentCard key={doc.id} doc={doc} language={language} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </AppShell>
   );

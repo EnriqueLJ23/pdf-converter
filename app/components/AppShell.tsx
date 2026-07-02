@@ -65,9 +65,9 @@ export function AppShell({
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen">
       <aside
-        className={`flex shrink-0 flex-col justify-between border-r border-black/5 bg-white/70 backdrop-blur-xl transition-[width] dark:border-white/10 dark:bg-black/50 ${
+        className={`flex shrink-0 flex-col justify-between overflow-y-auto border-r border-black/5 bg-white/70 backdrop-blur-xl transition-[width] dark:border-white/10 dark:bg-black/50 ${
           collapsed ? "w-16" : "w-60"
         }`}
       >
