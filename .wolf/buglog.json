@@ -16,6 +16,102 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-01T15:19:10.370Z"
+    },
+    {
+      "id": "bug-002",
+      "timestamp": "2026-07-01T20:28:30.177Z",
+      "error_message": "Incorrect value in code",
+      "file": "package.json",
+      "root_cause": "Had \"openid-client\"",
+      "fix": "Changed to \"lucide-react\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "json"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-01T20:28:30.177Z"
+    },
+    {
+      "id": "bug-003",
+      "timestamp": "2026-07-01T21:13:00.211Z",
+      "error_message": "Null/undefined access in ",
+      "file": "app/lib/db.server.test.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-01T21:13:00.212Z"
+    },
+    {
+      "id": "bug-004",
+      "timestamp": "2026-07-01T21:41:57.728Z",
+      "error_message": "Missing error handling in unknown",
+      "file": "docs/superpowers/plans/2026-07-01-pdf-search-ocr.md",
+      "root_cause": "Code path had no error handling — exceptions would propagate uncaught",
+      "fix": "Added try/catch block",
+      "tags": [
+        "auto-detected",
+        "error-handling",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-01T21:41:57.728Z"
+    },
+    {
+      "id": "bug-005",
+      "timestamp": "2026-07-01T21:59:08.983Z",
+      "error_message": "Type error",
+      "file": "app/lib/db.server.test.ts",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-01T21:59:08.983Z"
+    },
+    {
+      "id": "bug-006",
+      "timestamp": "2026-07-01T22:02:00.711Z",
+      "error_message": "Incorrect value in code",
+      "file": "app/routes/admin-upload.tsx",
+      "root_cause": "Had \"~/lib/pdf-convert.server\"",
+      "fix": "Changed to \"~/lib/index-document.server\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-01T22:02:00.711Z"
+    },
+    {
+      "id": "bug-007",
+      "timestamp": "2026-07-01T22:12:34.500Z",
+      "error_message": "Significant refactor of ",
+      "file": "app/routes/admin-documents-list.tsx",
+      "root_cause": "7 lines replaced/restructured",
+      "fix": "Rewrote 9→4 lines (7 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-01T22:12:34.500Z"
     }
   ]
 }

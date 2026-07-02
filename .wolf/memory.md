@@ -55,3 +55,92 @@
 | 11:43 | Session end: 41 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 16 reads | ~49149 tok |
 | 11:55 | Session end: 41 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 16 reads | ~49149 tok |
 | 12:22 | Session end: 41 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 16 reads | ~49149 tok |
+| 12:43 | Edited app/lib/auth.server.ts | expanded (+12 lines) | ~212 |
+| 12:45 | Session end: 42 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~50722 tok |
+| 12:53 | Edited app/lib/auth.server.ts | expanded (+10 lines) | ~134 |
+| 12:54 | Session end: 43 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~51007 tok |
+| 14:07 | Session end: 43 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~51007 tok |
+| 14:17 | Session end: 43 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~51007 tok |
+| 14:18 | Session end: 43 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~51007 tok |
+| 14:18 | Session end: 43 writes across 28 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~51007 tok |
+| 14:20 | Created docs/superpowers/specs/2026-07-01-vercel-glassmorphism-redesign-design.md | — | ~1947 |
+| 14:26 | Created docs/superpowers/plans/2026-07-01-vercel-glassmorphism-redesign.md | — | ~9022 |
+| 14:27 | Session end: 45 writes across 30 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~62760 tok |
+| 14:28 | Created app/app.css | — | ~226 |
+| 14:28 | Edited package.json | 2→3 lines | ~25 |
+| 14:33 | Session end: 47 writes across 30 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~63011 tok |
+| 14:34 | Session end: 47 writes across 30 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~63011 tok |
+| 14:34 | Session end: 47 writes across 30 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~63011 tok |
+| 14:37 | Created docs/superpowers/specs/2026-07-01-admin-document-management-design.md | — | ~1664 |
+| 14:37 | Session end: 48 writes across 31 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 17 reads | ~64794 tok |
+| 14:38 | Edited app/root.tsx | CSS: __html, prefers-color-scheme | ~165 |
+| 14:42 | Created app/components/GlassPanel.tsx | — | ~149 |
+| 14:43 | Created app/components/Button.tsx | — | ~316 |
+| 14:43 | Created app/components/ThemeToggle.tsx | — | ~243 |
+| 14:43 | Created app/components/AppShell.tsx | — | ~574 |
+| 14:44 | Created app/routes/documents-list.tsx | — | ~532 |
+| 14:44 | Created app/routes/admin-documents-list.tsx | — | ~544 |
+| 14:45 | Edited app/routes/admin-upload.tsx | added 3 import(s) | ~243 |
+| 14:45 | Edited app/routes/admin-upload.tsx | modified AdminUpload() | ~466 |
+| 14:45 | Created app/routes/logout.tsx | — | ~301 |
+| 14:46 | Created app/routes/document-viewer.tsx | — | ~1205 |
+| 14:48 | Session end: 59 writes across 36 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 22 reads | ~72514 tok |
+| 14:57 | Session end: 59 writes across 36 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 22 reads | ~72514 tok |
+| 14:57 | Session end: 59 writes across 36 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 22 reads | ~72514 tok |
+| 14:58 | Session end: 59 writes across 36 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 22 reads | ~72514 tok |
+| 14:58 | Session end: 59 writes across 36 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 22 reads | ~72514 tok |
+| 15:00 | Created docs/superpowers/specs/2026-07-01-pdf-search-ocr-design.md | — | ~2503 |
+| 15:00 | Session end: 60 writes across 37 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 22 reads | ~75196 tok |
+| 15:07 | Created docs/superpowers/plans/2026-07-01-admin-document-management.md | — | ~11561 |
+| 15:07 | Session end: 61 writes across 38 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 25 reads | ~90155 tok |
+| 15:09 | Edited app/lib/db.server.test.ts | 18→21 lines | ~134 |
+| 15:09 | Edited app/lib/db.server.test.ts | expanded (+16 lines) | ~173 |
+| 15:11 | Created app/lib/db.server.ts | — | ~1728 |
+| 15:12 | Edited app/lib/db.server.test.ts | 13→15 lines | ~81 |
+| 15:13 | Edited app/lib/db.server.test.ts | added optional chaining | ~507 |
+| 15:13 | Created app/lib/db.server.ts | — | ~2128 |
+| 15:15 | Created app/routes/admin-categorias.tsx | — | ~976 |
+| 15:15 | Edited app/routes.ts | 1→2 lines | ~36 |
+| 15:17 | Created app/routes/admin-document-edit.tsx | — | ~1205 |
+| 15:17 | Edited app/routes.ts | 1→2 lines | ~36 |
+| 15:19 | Created app/routes/admin-documents-list.tsx | — | ~703 |
+| 15:19 | Created app/routes/admin-upload.tsx | — | ~1325 |
+| 15:23 | Session end: 73 writes across 40 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 25 reads | ~99187 tok |
+| 15:41 | Created docs/superpowers/plans/2026-07-01-pdf-search-ocr.md | — | ~12094 |
+| 15:41 | Edited docs/superpowers/plans/2026-07-01-pdf-search-ocr.md | modified indexDocumentText() | ~239 |
+| 15:41 | Edited docs/superpowers/plans/2026-07-01-pdf-search-ocr.md | 5→10 lines | ~148 |
+| 15:42 | Edited docs/superpowers/plans/2026-07-01-pdf-search-ocr.md | 12→12 lines | ~121 |
+| 15:42 | Edited docs/superpowers/plans/2026-07-01-pdf-search-ocr.md | 2→2 lines | ~61 |
+| 15:42 | Edited docs/superpowers/plans/2026-07-01-pdf-search-ocr.md | 6→6 lines | ~115 |
+| 15:46 | Session end: 79 writes across 41 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 27 reads | ~114601 tok |
+| 15:47 | Edited package.json | 5→8 lines | ~64 |
+| 15:48 | Created app/lib/text-extract.server.test.ts | — | ~975 |
+| 15:49 | Created app/lib/text-extract.server.ts | — | ~495 |
+| 15:55 | Created app/lib/keywords.server.test.ts | — | ~246 |
+| 15:56 | Created app/lib/keywords.server.ts | — | ~429 |
+| 15:58 | Edited app/lib/db.server.test.ts | 22→26 lines | ~165 |
+| 15:59 | Edited app/lib/db.server.test.ts | expanded (+50 lines) | ~667 |
+| 16:00 | Created app/lib/db.server.ts | — | ~2981 |
+| 16:01 | Created app/lib/index-document.server.ts | — | ~335 |
+| 16:02 | Edited app/routes/admin-upload.tsx | added 1 import(s) | ~78 |
+| 16:02 | Edited app/routes/admin-upload.tsx | CSS: awaited, error | ~302 |
+| 16:02 | Created app/routes/documents-list.tsx | — | ~865 |
+| 16:03 | Edited Dockerfile | 10→14 lines | ~172 |
+| 16:06 | Session end: 92 writes across 46 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 27 reads | ~122387 tok |
+| 16:08 | Session end: 92 writes across 46 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 27 reads | ~122387 tok |
+| 16:12 | Created app/components/AppShell.tsx | — | ~1206 |
+| 16:12 | Edited app/routes/documents-list.tsx | 2→4 lines | ~44 |
+| 16:12 | Edited app/routes/admin-documents-list.tsx | 4→3 lines | ~40 |
+| 16:12 | Edited app/routes/admin-documents-list.tsx | 9→4 lines | ~56 |
+| 16:12 | Edited app/routes/admin-upload.tsx | inline fix | ~8 |
+| 16:12 | Edited app/routes/admin-categorias.tsx | 2→4 lines | ~48 |
+| 16:12 | Edited app/routes/admin-document-edit.tsx | 2→2 lines | ~29 |
+| 16:13 | Edited app/routes/admin-document-edit.tsx | expanded (+9 lines) | ~108 |
+| 16:13 | Created app/routes/document-viewer.tsx | — | ~1621 |
+| 16:14 | Session end: 101 writes across 46 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 30 reads | ~129303 tok |
+| 16:21 | Session end: 101 writes across 46 files (2026-07-01-pdf-viewer-design.md, .gitignore, 2026-07-01-pdf-viewer-implementation.md, package.json, vitest.config.ts) | 30 reads | ~129303 tok |
+
+## Session: 2026-07-01 16:29
+
+| Time | Action | File(s) | Outcome | ~Tokens |
+|------|--------|---------|---------|--------|
