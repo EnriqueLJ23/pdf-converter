@@ -5,17 +5,20 @@ import { AppShell } from "~/components/AppShell";
 import { GlassPanel } from "~/components/GlassPanel";
 import { requireUser } from "~/lib/auth.server";
 import { db, getDocumentById } from "~/lib/db.server";
+import { t } from "~/lib/i18n";
+import { getLanguage } from "~/lib/language.server";
 import type { Route } from "./+types/document-viewer";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await requireUser(request);
+  const language = await getLanguage(request);
 
   const doc = getDocumentById(db, params.id);
   if (!doc || doc.status !== "ready") {
-    throw data("Documento no encontrado", { status: 404 });
+    throw data(t(language, "viewer.notFound"), { status: 404 });
   }
 
-  return { user, document: doc };
+  return { user, document: doc, language };
 }
 
 const MIN_ZOOM = 50;
@@ -28,7 +31,7 @@ const toolbarButtonClasses =
 export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
   // Renamed to `pdfDocument`: destructuring as `document` would shadow the
   // global `document` object needed below for the keydown listener.
-  const { user, document: pdfDocument } = loaderData;
+  const { user, document: pdfDocument, language } = loaderData;
   const [page, setPage] = useState(1);
   const [zoom, setZoom] = useState(100);
 
@@ -46,12 +49,12 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
   }, []);
 
   return (
-    <AppShell user={user}>
+    <AppShell user={user} language={language}>
       <Link
         to="/documentos"
         className="mb-4 inline-block text-sm text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
       >
-        ← Volver
+        {t(language, "common.back")}
       </Link>
 
       <div
@@ -69,13 +72,15 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
-                aria-label="Página anterior"
+                aria-label={t(language, "viewer.prevPage")}
                 className={toolbarButtonClasses}
               >
                 <ChevronLeft size={18} />
               </button>
               <span className="text-sm text-black/60 dark:text-white/50">
-                Página {page} de {pdfDocument.pageCount}
+                {t(language, "viewer.pageIndicator")
+                  .replace("{page}", String(page))
+                  .replace("{total}", String(pdfDocument.pageCount))}
               </span>
               <button
                 type="button"
@@ -83,7 +88,7 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
                 onClick={() =>
                   setPage((p) => Math.min(pdfDocument.pageCount, p + 1))
                 }
-                aria-label="Página siguiente"
+                aria-label={t(language, "viewer.nextPage")}
                 className={toolbarButtonClasses}
               >
                 <ChevronRight size={18} />
@@ -97,7 +102,7 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
                 onClick={() =>
                   setZoom((z) => Math.max(MIN_ZOOM, z - ZOOM_STEP))
                 }
-                aria-label="Reducir zoom"
+                aria-label={t(language, "viewer.zoomOut")}
                 className={toolbarButtonClasses}
               >
                 <Minus size={18} />
@@ -105,7 +110,7 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
               <button
                 type="button"
                 onClick={() => setZoom(100)}
-                title="Restablecer zoom"
+                title={t(language, "viewer.resetZoom")}
                 className="w-14 text-center text-sm text-black/60 hover:text-black dark:text-white/50 dark:hover:text-white"
               >
                 {zoom}%
@@ -116,7 +121,7 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
                 onClick={() =>
                   setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP))
                 }
-                aria-label="Aumentar zoom"
+                aria-label={t(language, "viewer.zoomIn")}
                 className={toolbarButtonClasses}
               >
                 <Plus size={18} />
