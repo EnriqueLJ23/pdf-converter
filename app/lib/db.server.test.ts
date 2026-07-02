@@ -15,6 +15,7 @@ import {
   markDocumentReady,
   searchReadyDocuments,
   syncDocumentFts,
+  updateDocumentCategory,
   updateDocumentMetadata,
   upsertUser,
 } from "./db.server";
@@ -228,5 +229,28 @@ describe("db.server", () => {
 
     expect(searchReadyDocuments(db, "prueba", "es").map((d) => d.id)).toEqual(["d1"]);
     expect(searchReadyDocuments(db, "prueba", "ja").map((d) => d.id)).toEqual(["d2"]);
+  });
+
+  it("reassigns a document's category without touching other fields", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createCategory(db, { id: "c1", name: "Finanzas" });
+    createCategory(db, { id: "c2", name: "RH" });
+    createDocument(db, {
+      id: "d1",
+      title: "Nomina",
+      description: "desc",
+      uploadedBy: "u1",
+      categoryId: "c1",
+    });
+
+    updateDocumentCategory(db, "d1", "c2");
+
+    const doc = getDocumentById(db, "d1");
+    expect(doc?.categoryId).toBe("c2");
+    expect(doc?.title).toBe("Nomina");
+    expect(doc?.description).toBe("desc");
+
+    updateDocumentCategory(db, "d1", null);
+    expect(getDocumentById(db, "d1")?.categoryId).toBeNull();
   });
 });

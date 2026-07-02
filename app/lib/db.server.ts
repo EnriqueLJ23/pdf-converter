@@ -283,6 +283,10 @@ export function updateDocumentMetadata(
     .run(metadata.title, metadata.description, metadata.categoryId, metadata.language, id);
 }
 
+export function updateDocumentCategory(conn: Database.Database, id: string, categoryId: string | null): void {
+  conn.prepare("UPDATE documents SET category_id = ? WHERE id = ?").run(categoryId, id);
+}
+
 export function deleteDocumentRecord(conn: Database.Database, id: string): void {
   conn.prepare("DELETE FROM documents WHERE id = ?").run(id);
 }
