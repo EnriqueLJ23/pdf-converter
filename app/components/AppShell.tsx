@@ -9,17 +9,49 @@ import {
   Upload,
 } from "lucide-react";
 import type { ReactNode } from "react";
-import { Link } from "react-router";
+import { Link, useFetcher } from "react-router";
+import { LANGUAGE_LABELS, t } from "~/lib/i18n";
+import type { Language } from "~/lib/i18n";
 import { ThemeToggle } from "./ThemeToggle";
 
 const NAV_LINK_CLASSES =
   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-black/70 transition-colors hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/5";
 
+function LanguageToggle({ language }: { language: Language }) {
+  const fetcher = useFetcher();
+
+  function selectLanguage(next: Language) {
+    fetcher.submit({ language: next }, { method: "post", action: "/idioma" });
+  }
+
+  return (
+    <div className="flex items-center gap-1 rounded-full border border-black/10 p-0.5 text-xs dark:border-white/10">
+      {(["es", "ja"] as const).map((option) => (
+        <button
+          key={option}
+          type="button"
+          onClick={() => selectLanguage(option)}
+          aria-pressed={language === option}
+          className={`rounded-full px-2 py-1 transition-colors ${
+            language === option
+              ? "bg-accent-500 text-white"
+              : "text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/5"
+          }`}
+        >
+          {LANGUAGE_LABELS[option]}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function AppShell({
   user,
+  language,
   children,
 }: {
   user?: { name: string; isAdmin: boolean };
+  language: Language;
   children: ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -45,13 +77,13 @@ export function AppShell({
           <div className="flex items-center justify-between px-3 py-4">
             {!collapsed && (
               <span className="text-lg font-semibold tracking-tight">
-                Documentos
+                {t(language, "nav.documents")}
               </span>
             )}
             <button
               type="button"
               onClick={toggleCollapsed}
-              aria-label={collapsed ? "Expandir menú" : "Colapsar menú"}
+              aria-label={collapsed ? t(language, "nav.expand") : t(language, "nav.collapse")}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-black/60 transition-colors hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/5"
             >
               {collapsed ? (
@@ -66,10 +98,10 @@ export function AppShell({
             <Link
               to="/documentos"
               className={NAV_LINK_CLASSES}
-              title="Documentos"
+              title={t(language, "nav.documents")}
             >
               <FileText size={18} />
-              {!collapsed && <span>Documentos</span>}
+              {!collapsed && <span>{t(language, "nav.documents")}</span>}
             </Link>
 
             {user?.isAdmin && (
@@ -77,32 +109,32 @@ export function AppShell({
                 <div className="my-2 border-t border-black/5 dark:border-white/10" />
                 {!collapsed && (
                   <span className="px-3 text-xs font-medium tracking-wide text-black/40 uppercase dark:text-white/30">
-                    Admin
+                    {t(language, "nav.adminSection")}
                   </span>
                 )}
                 <Link
                   to="/admin/upload"
                   className={NAV_LINK_CLASSES}
-                  title="Subir documento"
+                  title={t(language, "nav.upload")}
                 >
                   <Upload size={18} />
-                  {!collapsed && <span>Subir documento</span>}
+                  {!collapsed && <span>{t(language, "nav.upload")}</span>}
                 </Link>
                 <Link
                   to="/admin/documentos"
                   className={NAV_LINK_CLASSES}
-                  title="Administrar documentos"
+                  title={t(language, "nav.manage")}
                 >
                   <FolderOpen size={18} />
-                  {!collapsed && <span>Administrar documentos</span>}
+                  {!collapsed && <span>{t(language, "nav.manage")}</span>}
                 </Link>
                 <Link
                   to="/admin/categorias"
                   className={NAV_LINK_CLASSES}
-                  title="Categorías"
+                  title={t(language, "nav.categories")}
                 >
                   <Tags size={18} />
-                  {!collapsed && <span>Categorías</span>}
+                  {!collapsed && <span>{t(language, "nav.categories")}</span>}
                 </Link>
               </>
             )}
@@ -116,14 +148,15 @@ export function AppShell({
                 {user.name}
               </span>
             )}
+            {!collapsed && <LanguageToggle language={language} />}
             <div
               className={`flex items-center gap-2 ${collapsed ? "flex-col" : ""}`}
             >
-              <ThemeToggle />
+              <ThemeToggle label={t(language, "nav.themeToggle")} />
               <Link
                 to="/logout"
-                aria-label="Cerrar sesión"
-                title="Cerrar sesión"
+                aria-label={t(language, "nav.logout")}
+                title={t(language, "nav.logout")}
                 className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 text-black/70 transition-colors hover:bg-black/5 dark:border-white/10 dark:text-white/70 dark:hover:bg-white/5"
               >
                 <LogOut size={16} />
