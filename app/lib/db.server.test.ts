@@ -107,6 +107,7 @@ describe("db.server", () => {
       title: "Nomina 2026",
       description: "Actualizado",
       categoryId: null,
+      language: "es",
     });
 
     const updated = getDocumentById(db, "d1");
@@ -188,5 +189,44 @@ describe("db.server", () => {
 
     expect(() => searchReadyDocuments(db, '"unclosed AND OR* NEAR()')).not.toThrow();
     expect(searchReadyDocuments(db, '"unclosed AND OR* NEAR()')).toHaveLength(0);
+  });
+
+  it("defaults a new document's language to Spanish", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    const doc = createDocument(db, { id: "d1", title: "Sin idioma", description: null, uploadedBy: "u1" });
+
+    expect(doc.language).toBe("es");
+  });
+
+  it("stores an explicit document language and updates it", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createDocument(db, { id: "d1", title: "Nihongo", description: null, uploadedBy: "u1", language: "ja" });
+
+    expect(getDocumentById(db, "d1")?.language).toBe("ja");
+
+    updateDocumentMetadata(db, "d1", { title: "Nihongo", description: null, categoryId: null, language: "es" });
+
+    expect(getDocumentById(db, "d1")?.language).toBe("es");
+  });
+
+  it("filters ready and search results by language", () => {
+    upsertUser(db, { id: "u1", email: "a@x.com", name: "Ana", isAdmin: true });
+    createDocument(db, { id: "d1", title: "Documento ES", description: null, uploadedBy: "u1", language: "es" });
+    createDocument(db, { id: "d2", title: "日本語文書", description: null, uploadedBy: "u1", language: "ja" });
+    markDocumentReady(db, "d1", 1);
+    markDocumentReady(db, "d2", 1);
+    syncDocumentFts(db, "d1");
+    syncDocumentFts(db, "d2");
+    markDocumentIndexed(db, "d1", { extractedText: "contenido en español", keywords: ["prueba"] });
+    markDocumentIndexed(db, "d2", { extractedText: "日本語のコンテンツ", keywords: ["prueba"] });
+    syncDocumentFts(db, "d1");
+    syncDocumentFts(db, "d2");
+
+    expect(listReadyDocuments(db).map((d) => d.id).sort()).toEqual(["d1", "d2"]);
+    expect(listReadyDocuments(db, "es").map((d) => d.id)).toEqual(["d1"]);
+    expect(listReadyDocuments(db, "ja").map((d) => d.id)).toEqual(["d2"]);
+
+    expect(searchReadyDocuments(db, "prueba", "es").map((d) => d.id)).toEqual(["d1"]);
+    expect(searchReadyDocuments(db, "prueba", "ja").map((d) => d.id)).toEqual(["d2"]);
   });
 });

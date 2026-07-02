@@ -2,6 +2,7 @@ import Database from "better-sqlite3";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import type { Language } from "./i18n";
 
 export type DocumentStatus = "processing" | "ready" | "error";
 export type IndexStatus = "pending" | "indexed" | "failed";
@@ -33,6 +34,7 @@ export interface DocumentRecord {
   categoryName: string | null;
   indexStatus: IndexStatus;
   keywords: string[];
+  language: Language;
 }
 
 interface UserRow {
@@ -62,6 +64,7 @@ interface DocumentRow {
   category_name: string | null;
   index_status: IndexStatus;
   keywords: string | null;
+  language: string;
 }
 
 export function createDb(filePath: string): Database.Database {
@@ -98,7 +101,8 @@ export function createDb(filePath: string): Database.Database {
       category_id TEXT REFERENCES categories(id) ON DELETE SET NULL,
       extracted_text TEXT,
       keywords TEXT,
-      index_status TEXT NOT NULL DEFAULT 'pending'
+      index_status TEXT NOT NULL DEFAULT 'pending',
+      language TEXT NOT NULL DEFAULT 'es'
     );
 
     CREATE VIRTUAL TABLE IF NOT EXISTS documents_fts USING fts5(
@@ -126,6 +130,9 @@ export function createDb(filePath: string): Database.Database {
   }
   if (!existingColumnNames.has("index_status")) {
     conn.exec("ALTER TABLE documents ADD COLUMN index_status TEXT NOT NULL DEFAULT 'pending'");
+  }
+  if (!existingColumnNames.has("language")) {
+    conn.exec("ALTER TABLE documents ADD COLUMN language TEXT NOT NULL DEFAULT 'es'");
   }
 
   return conn;
@@ -168,6 +175,7 @@ function rowToDocument(row: DocumentRow): DocumentRecord {
     categoryName: row.category_name,
     indexStatus: row.index_status,
     keywords: row.keywords ? row.keywords.split(", ").filter(Boolean) : [],
+    language: row.language === "ja" ? "ja" : "es",
   };
 }
 
@@ -233,13 +241,14 @@ export function createDocument(
     description: string | null;
     uploadedBy: string;
     categoryId?: string | null;
+    language?: Language;
   },
 ): DocumentRecord {
   const now = new Date().toISOString();
   conn
     .prepare(
-      `INSERT INTO documents (id, title, description, page_count, uploaded_by, created_at, status, error_message, category_id)
-       VALUES (@id, @title, @description, 0, @uploadedBy, @createdAt, 'processing', NULL, @categoryId)`,
+      `INSERT INTO documents (id, title, description, page_count, uploaded_by, created_at, status, error_message, category_id, language)
+       VALUES (@id, @title, @description, 0, @uploadedBy, @createdAt, 'processing', NULL, @categoryId, @language)`,
     )
     .run({
       id: doc.id,
@@ -248,6 +257,7 @@ export function createDocument(
       uploadedBy: doc.uploadedBy,
       createdAt: now,
       categoryId: doc.categoryId ?? null,
+      language: doc.language ?? "es",
     });
 
   return rowToDocument(
@@ -266,11 +276,11 @@ export function markDocumentError(conn: Database.Database, id: string, errorMess
 export function updateDocumentMetadata(
   conn: Database.Database,
   id: string,
-  metadata: { title: string; description: string | null; categoryId: string | null },
+  metadata: { title: string; description: string | null; categoryId: string | null; language: Language },
 ): void {
   conn
-    .prepare("UPDATE documents SET title = ?, description = ?, category_id = ? WHERE id = ?")
-    .run(metadata.title, metadata.description, metadata.categoryId, id);
+    .prepare("UPDATE documents SET title = ?, description = ?, category_id = ?, language = ? WHERE id = ?")
+    .run(metadata.title, metadata.description, metadata.categoryId, metadata.language, id);
 }
 
 export function deleteDocumentRecord(conn: Database.Database, id: string): void {
@@ -315,18 +325,23 @@ function sanitizeFtsQuery(query: string): string {
   return terms.length > 0 ? terms.join(" ") : '""';
 }
 
-export function searchReadyDocuments(conn: Database.Database, query: string): DocumentRecord[] {
+export function searchReadyDocuments(
+  conn: Database.Database,
+  query: string,
+  language?: Language,
+): DocumentRecord[] {
   const ftsQuery = sanitizeFtsQuery(query);
-  const rows = conn
-    .prepare(
-      `SELECT documents.*, categories.name AS category_name
+  const sql = `SELECT documents.*, categories.name AS category_name
        FROM documents_fts
        JOIN documents ON documents.id = documents_fts.document_id
        LEFT JOIN categories ON categories.id = documents.category_id
-       WHERE documents_fts MATCH ? AND documents.status = 'ready'
-       ORDER BY bm25(documents_fts)`,
-    )
-    .all(ftsQuery) as DocumentRow[];
+       WHERE documents_fts MATCH ? AND documents.status = 'ready'${
+         language ? " AND documents.language = ?" : ""
+       }
+       ORDER BY bm25(documents_fts)`;
+  const rows = (
+    language ? conn.prepare(sql).all(ftsQuery, language) : conn.prepare(sql).all(ftsQuery)
+  ) as DocumentRow[];
   return rows.map(rowToDocument);
 }
 
@@ -336,27 +351,33 @@ export interface DocumentSuggestion {
   categoryName: string | null;
 }
 
-export function suggestReadyDocuments(conn: Database.Database, query: string, limit = 8): DocumentSuggestion[] {
+export function suggestReadyDocuments(
+  conn: Database.Database,
+  query: string,
+  limit = 8,
+  language?: Language,
+): DocumentSuggestion[] {
   const like = `%${query.replace(/[%_]/g, (char) => `\\${char}`)}%`;
-  const rows = conn
-    .prepare(
-      `SELECT documents.id AS id, documents.title AS title, categories.name AS category_name
+  const sql = `SELECT documents.id AS id, documents.title AS title, categories.name AS category_name
        FROM documents
        LEFT JOIN categories ON categories.id = documents.category_id
-       WHERE documents.status = 'ready' AND documents.title LIKE ? ESCAPE '\\'
+       WHERE documents.status = 'ready' AND documents.title LIKE ? ESCAPE '\\'${
+         language ? " AND documents.language = ?" : ""
+       }
        ORDER BY documents.title ASC
-       LIMIT ?`,
-    )
-    .all(like, limit) as { id: string; title: string; category_name: string | null }[];
+       LIMIT ?`;
+  const rows = (
+    language ? conn.prepare(sql).all(like, language, limit) : conn.prepare(sql).all(like, limit)
+  ) as { id: string; title: string; category_name: string | null }[];
   return rows.map((row) => ({ id: row.id, title: row.title, categoryName: row.category_name }));
 }
 
-export function listReadyDocuments(conn: Database.Database): DocumentRecord[] {
-  return (
-    conn
-      .prepare(`${DOCUMENT_SELECT} WHERE documents.status = 'ready' ORDER BY documents.created_at DESC`)
-      .all() as DocumentRow[]
-  ).map(rowToDocument);
+export function listReadyDocuments(conn: Database.Database, language?: Language): DocumentRecord[] {
+  const sql = language
+    ? `${DOCUMENT_SELECT} WHERE documents.status = 'ready' AND documents.language = ? ORDER BY documents.created_at DESC`
+    : `${DOCUMENT_SELECT} WHERE documents.status = 'ready' ORDER BY documents.created_at DESC`;
+  const rows = (language ? conn.prepare(sql).all(language) : conn.prepare(sql).all()) as DocumentRow[];
+  return rows.map(rowToDocument);
 }
 
 export function listAllDocuments(conn: Database.Database): DocumentRecord[] {
