@@ -5,8 +5,6 @@ import {
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
-  Tags,
-  Upload,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link, useFetcher } from "react-router";
@@ -113,28 +111,12 @@ export function AppShell({
                   </span>
                 )}
                 <Link
-                  to="/admin/upload"
-                  className={NAV_LINK_CLASSES}
-                  title={t(language, "nav.upload")}
-                >
-                  <Upload size={18} />
-                  {!collapsed && <span>{t(language, "nav.upload")}</span>}
-                </Link>
-                <Link
                   to="/admin/documentos"
                   className={NAV_LINK_CLASSES}
                   title={t(language, "nav.manage")}
                 >
                   <FolderOpen size={18} />
                   {!collapsed && <span>{t(language, "nav.manage")}</span>}
-                </Link>
-                <Link
-                  to="/admin/categorias"
-                  className={NAV_LINK_CLASSES}
-                  title={t(language, "nav.categories")}
-                >
-                  <Tags size={18} />
-                  {!collapsed && <span>{t(language, "nav.categories")}</span>}
                 </Link>
               </>
             )}
