@@ -1,11 +1,11 @@
 FROM node:22-bookworm AS development-dependencies-env
-RUN apk add --no-cache python3 make g++
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 COPY . /app
 WORKDIR /app
 RUN npm ci
 
 FROM node:22-bookworm AS production-dependencies-env
-RUN apk add --no-cache python3 make g++
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 COPY ./package.json package-lock.json /app/
 WORKDIR /app
 RUN npm ci --omit=dev
@@ -17,7 +17,7 @@ WORKDIR /app
 RUN npm run build
 
 FROM node:22-bookworm
-RUN apk add --no-cache poppler-utils ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends poppler-utils ca-certificates wget && rm -rf /var/lib/apt/lists/*
 RUN mkdir -p /app/tessdata && \
     wget -q https://tessdata.projectnaptha.com/4.0.0/eng.traineddata.gz -O /app/tessdata/eng.traineddata.gz && \
     wget -q https://tessdata.projectnaptha.com/4.0.0/spa.traineddata.gz -O /app/tessdata/spa.traineddata.gz

@@ -112,6 +112,40 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-01T22:12:34.500Z"
+    },
+    {
+      "id": "bug-008",
+      "timestamp": "2026-07-02T04:08:08.997Z",
+      "error_message": "Significant refactor of ",
+      "file": "Dockerfile",
+      "root_cause": "2 lines replaced/restructured",
+      "fix": "Rewrote 9→9 lines (2 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "unknown"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T04:08:08.997Z"
+    },
+    {
+      "id": "bug-009",
+      "timestamp": "2026-07-01T22:15:00.000Z",
+      "error_message": "Dockerfile used apk (Alpine package manager) after base image was changed to node:22-bookworm (Debian-based), which would fail to build since bookworm has no apk binary",
+      "file": "Dockerfile",
+      "root_cause": "Base image was switched from an Alpine variant to node:22-bookworm but the apk add commands were not updated to match the new distro's package manager",
+      "fix": "Replaced all `apk add --no-cache ...` calls with `apt-get update && apt-get install -y --no-install-recommends ... && rm -rf /var/lib/apt/lists/*`; also added wget explicitly to the final stage since Debian slim images don't bundle it by default (needed for tessdata download)",
+      "tags": [
+        "docker",
+        "package-manager",
+        "build-failure",
+        "debian",
+        "alpine"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-01T22:15:00.000Z"
     }
   ]
 }
