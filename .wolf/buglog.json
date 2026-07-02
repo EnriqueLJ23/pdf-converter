@@ -530,6 +530,38 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-02T15:21:09.289Z"
+    },
+    {
+      "id": "bug-034",
+      "timestamp": "2026-07-02T15:33:47.128Z",
+      "error_message": "CSS fix: __html",
+      "file": "app/root.tsx",
+      "root_cause": "__html: `(function () { → `document.addEventListener(\"contextmenu\", function (e) { e.preventDefault()",
+      "fix": "Changed __html: `(function () { → `document.addEventListener(\"contextmenu\", function (e) { e.preventDefault()",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T15:33:47.128Z"
+    },
+    {
+      "id": "bug-035",
+      "timestamp": "2026-07-02T15:33:56.977Z",
+      "error_message": "CSS fix: print",
+      "file": "app/routes/document-viewer.tsx",
+      "root_cause": "print: hidden\" → hidden\">",
+      "fix": "Changed print: hidden\" → hidden\">",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T15:33:56.977Z"
     }
   ]
 }

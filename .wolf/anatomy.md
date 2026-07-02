@@ -1,6 +1,6 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-02T15:21:31.557Z
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-02T15:33:56.961Z
 > Files: 83 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../JESSEN~1/AppData/Local/Temp/claude/C--Users-Jes-sEnriqueLunaJass-OneDrive---tq1-com-mx-Documents-DEV-pdf-converter/4a678a1d-35fe-47d7-863f-333f7942529c/scratchpad/
@@ -61,7 +61,7 @@
 ## app/
 
 - `app.css` — Styles: 4 rules, 5 vars (~226 tok)
-- `root.tsx` — loader (~714 tok)
+- `root.tsx` — loader (~828 tok)
 - `routes.ts` — Declares RouteConfig (~202 tok)
 
 ## app/components/
@@ -104,7 +104,7 @@
 - `admin-upload.tsx` — MAX_UPLOAD_BYTES — renders form (~3284 tok)
 - `auth-callback.tsx` — loader (~158 tok)
 - `document-page-image.tsx` — loader (~316 tok)
-- `document-viewer.tsx` — loader (~1730 tok)
+- `document-viewer.tsx` — loader (~1709 tok)
 - `documentos-sugerencias.tsx` — loader (~159 tok)
 - `documents-list.tsx` — loader — renders form (~2314 tok)
 - `home.tsx` — loader (~103 tok)

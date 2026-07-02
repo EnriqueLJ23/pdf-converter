@@ -7,7 +7,7 @@ export const LANGUAGE_LABELS: Record<Language, string> = {
 
 export const translations = {
   es: {
-    "nav.documents": "Paperwork",
+    "nav.documents": "Documentos",
     "nav.adminSection": "Admin",
     "nav.manage": "Administrar documentos",
     "nav.collapse": "Colapsar menú",
