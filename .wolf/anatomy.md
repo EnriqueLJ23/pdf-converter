@@ -1,13 +1,14 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-02T13:19:41.903Z
-> Files: 69 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-02T15:21:31.557Z
+> Files: 83 tracked | Anatomy hits: 0 | Misses: 0
 
 ## ../../../../../JESSEN~1/AppData/Local/Temp/claude/C--Users-Jes-sEnriqueLunaJass-OneDrive---tq1-com-mx-Documents-DEV-pdf-converter/4a678a1d-35fe-47d7-863f-333f7942529c/scratchpad/
 
 - `folder-upload-test.mjs` — API routes: GET (1 endpoints) (~207 tok)
-- `seed.mts` — SCRATCH: makeReadyDoc (~721 tok)
+- `seed.mts` — SCRATCH: makeReadyDoc (~764 tok)
 - `seed.ts` — SCRATCH: makeReadyDoc (~743 tok)
+- `upload-language-test.mjs` — API routes: GET (1 endpoints) (~184 tok)
 
 ## ./
 
@@ -60,25 +61,32 @@
 ## app/
 
 - `app.css` — Styles: 4 rules, 5 vars (~226 tok)
-- `root.tsx` — links (~626 tok)
-- `routes.ts` — Declares RouteConfig (~221 tok)
+- `root.tsx` — loader (~714 tok)
+- `routes.ts` — Declares RouteConfig (~202 tok)
 
 ## app/components/
 
-- `AppShell.tsx` — NAV_LINK_CLASSES (~1206 tok)
+- `AppShell.tsx` — NAV_LINK_CLASSES (~1537 tok)
 - `Button.tsx` — VARIANT_CLASSES (~316 tok)
+- `Dialog.tsx` — Dialog — renders modal (~210 tok)
+- `DocumentThumbnail.tsx` — DocumentThumbnail (~231 tok)
+- `DocumentUploadForm.tsx` — walkEntry — renders form (~2548 tok)
 - `GlassPanel.tsx` — GlassPanel (~149 tok)
-- `ThemeToggle.tsx` — ThemeToggle (~243 tok)
+- `ThemeToggle.tsx` — ThemeToggle (~249 tok)
 
 ## app/lib/
 
 - `auth.server.test.ts` — Declares cookieHeaderFor (~596 tok)
 - `auth.server.ts` — API routes: GET (4 endpoints) (~1605 tok)
-- `db.server.test.ts` — Declares db (~1864 tok)
-- `db.server.ts` — Exports DocumentStatus, IndexStatus, UserRecord, CategoryRecord + 23 more (~3357 tok)
+- `db.server.test.ts` — Declares db (~2647 tok)
+- `db.server.ts` — Exports DocumentStatus, IndexStatus, UserRecord, CategoryRecord + 22 more (~3698 tok)
+- `i18n.test.ts` — Declares esKeys (~200 tok)
+- `i18n.ts` — Exports Language, LANGUAGE_LABELS, translations, TranslationKey, t (~1559 tok)
 - `index-document.server.ts` — Exports indexDocumentText (~335 tok)
 - `keywords.server.test.ts` — Declares text (~246 tok)
 - `keywords.server.ts` — Exports extractKeywords (~429 tok)
+- `language.server.test.ts` — Declares requestWithCookie (~290 tok)
+- `language.server.ts` — API routes: GET (1 endpoints) (~150 tok)
 - `pdf-convert.server.test.ts` — Declares poppler (~528 tok)
 - `pdf-convert.server.ts` — Exports PdfConversionError, isPdftoppmAvailable, convertPdfToPages (~567 tok)
 - `sanity.test.ts` (~46 tok)
@@ -86,21 +94,23 @@
 - `storage.server.ts` — Exports documentDir, originalPdfPath, pagesDir, pageImagePath, ensureDocumentDirs (~207 tok)
 - `text-extract.server.test.ts` — Declares pdfDoc (~975 tok)
 - `text-extract.server.ts` — Exports isTessdataAvailable, extractTextFromPdf, extractTextViaOcr, extractDocumentText (~495 tok)
+- `upload-document.server.ts` — Exports MAX_UPLOAD_BYTES, storeAndConvertPdf (~533 tok)
 
 ## app/routes/
 
-- `admin-categorias.tsx` — loader — renders form (~994 tok)
-- `admin-document-edit.tsx` — loader — renders form (~1274 tok)
-- `admin-documents-list.tsx` — loader (~639 tok)
-- `admin-upload.tsx` — MAX_UPLOAD_BYTES — renders form (~2941 tok)
+- `admin-categorias.tsx` — loader — renders form (~1059 tok)
+- `admin-document-edit.tsx` — loader — renders form (~1521 tok)
+- `admin-documents-list.tsx` — loader — renders modal (~3466 tok)
+- `admin-upload.tsx` — MAX_UPLOAD_BYTES — renders form (~3284 tok)
 - `auth-callback.tsx` — loader (~158 tok)
 - `document-page-image.tsx` — loader (~316 tok)
-- `document-viewer.tsx` — loader (~1618 tok)
-- `documentos-sugerencias.tsx` — loader (~127 tok)
-- `documents-list.tsx` — loader — renders form (~1788 tok)
+- `document-viewer.tsx` — loader (~1730 tok)
+- `documentos-sugerencias.tsx` — loader (~159 tok)
+- `documents-list.tsx` — loader — renders form (~2314 tok)
 - `home.tsx` — loader (~103 tok)
 - `login.tsx` — loader (~113 tok)
-- `logout.tsx` — loader — renders form (~301 tok)
+- `logout.tsx` — loader — renders form (~364 tok)
+- `set-language.tsx` — action (~122 tok)
 
 ## app/welcome/
 
@@ -112,6 +122,8 @@
 - `2026-07-01-pdf-search-ocr.md` — Búsqueda de documentos por contenido (OCR + palabras clave) Implementation Plan (~11492 tok)
 - `2026-07-01-pdf-viewer-implementation.md` — Visor de PDFs de solo lectura — Implementation Plan (~14105 tok)
 - `2026-07-01-vercel-glassmorphism-redesign.md` — Vercel-style Glassmorphism Redesign Implementation Plan (~8458 tok)
+- `2026-07-02-admin-ui-unification.md` — Unificación de la UI de administración Implementation Plan (~12336 tok)
+- `2026-07-02-language-toggle.md` — Selector de idioma (Español / Japonés) Implementation Plan (~19166 tok)
 
 ## docs/superpowers/specs/
 
@@ -119,3 +131,5 @@
 - `2026-07-01-pdf-search-ocr-design.md` — Búsqueda de documentos por contenido (OCR + palabras clave) (~2347 tok)
 - `2026-07-01-pdf-viewer-design.md` — Visor de PDFs de solo lectura (read-only PDF viewer) (~3067 tok)
 - `2026-07-01-vercel-glassmorphism-redesign-design.md` — Rediseño visual: SaaS glassmorphism estilo Vercel (~1825 tok)
+- `2026-07-02-admin-ui-unification-design.md` — Unificación de la UI de administración (~1629 tok)
+- `2026-07-02-language-toggle-design.md` — Selector de idioma (Español / Japonés) para documentos y UI (~1922 tok)

@@ -57,10 +57,7 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
         {t(language, "common.back")}
       </Link>
 
-      <div
-        className="select-none print:hidden"
-        onContextMenu={(event) => event.preventDefault()}
-      >
+      <div className="select-none print:hidden">
         <GlassPanel className="p-8">
           <h1 className="mb-4 text-xl font-semibold tracking-tight">
             {pdfDocument.title}

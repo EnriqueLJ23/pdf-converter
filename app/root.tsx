@@ -38,6 +38,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Paperwork</title>
         <script
           // Runs before hydration to avoid a flash of the wrong theme.
           dangerouslySetInnerHTML={{
@@ -46,6 +47,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
   var isDark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
   document.documentElement.classList.toggle("dark", isDark);
 })();`,
+          }}
+        />
+        <script
+          // Site-wide right-click disable — attached this early (before
+          // hydration) so it covers the whole document, not just the parts
+          // React has mounted into.
+          dangerouslySetInnerHTML={{
+            __html: `document.addEventListener("contextmenu", function (e) { e.preventDefault(); });`,
           }}
         />
         <Meta />

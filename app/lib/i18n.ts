@@ -7,7 +7,7 @@ export const LANGUAGE_LABELS: Record<Language, string> = {
 
 export const translations = {
   es: {
-    "nav.documents": "Documentos",
+    "nav.documents": "Paperwork",
     "nav.adminSection": "Admin",
     "nav.manage": "Administrar documentos",
     "nav.collapse": "Colapsar menú",
@@ -21,7 +21,8 @@ export const translations = {
     "common.titleRequired": "El título es obligatorio.",
 
     "documents.title": "Documentos",
-    "documents.searchPlaceholder": "Buscar por título, descripción o contenido...",
+    "documents.searchPlaceholder":
+      "Buscar por título, descripción o contenido...",
     "documents.emptyNoQuery": "Todavía no hay documentos disponibles.",
     "documents.emptyQuery": "No se encontraron documentos para «{query}».",
 
@@ -44,7 +45,8 @@ export const translations = {
     "upload.chooseFiles": "Elegir archivo(s)",
     "upload.chooseFolder": "Elegir carpeta",
     "upload.filesSummary": "{count} archivo(s) PDF seleccionados.",
-    "upload.filesSummaryFolder": "{count} archivo(s) PDF en la carpeta {folder}.",
+    "upload.filesSummaryFolder":
+      "{count} archivo(s) PDF en la carpeta {folder}.",
     "upload.noFilesSelected": "Selecciona o arrastra al menos un PDF.",
     "upload.uploadAllFailed": "No se pudo subir ningún archivo PDF.",
     "upload.cancel": "Cancelar",
@@ -53,7 +55,8 @@ export const translations = {
     "edit.save": "Guardar cambios",
     "edit.saving": "Guardando...",
     "edit.deleteDocument": "Eliminar documento",
-    "edit.deleteConfirm": '¿Borrar "{title}" permanentemente? Esta acción no se puede deshacer.',
+    "edit.deleteConfirm":
+      '¿Borrar "{title}" permanentemente? Esta acción no se puede deshacer.',
 
     "categories.namePlaceholder": "Nombre de la categoría",
     "categories.create": "Crear",
@@ -111,21 +114,26 @@ export const translations = {
     "upload.chooseFiles": "ファイルを選択",
     "upload.chooseFolder": "フォルダを選択",
     "upload.filesSummary": "{count}件のPDFファイルが選択されました。",
-    "upload.filesSummaryFolder": "フォルダ「{folder}」内に{count}件のPDFファイル。",
-    "upload.noFilesSelected": "少なくとも1つのPDFファイルを選択またはドラッグしてください。",
-    "upload.uploadAllFailed": "PDFファイルを1つもアップロードできませんでした。",
+    "upload.filesSummaryFolder":
+      "フォルダ「{folder}」内に{count}件のPDFファイル。",
+    "upload.noFilesSelected":
+      "少なくとも1つのPDFファイルを選択またはドラッグしてください。",
+    "upload.uploadAllFailed":
+      "PDFファイルを1つもアップロードできませんでした。",
     "upload.cancel": "キャンセル",
 
     "edit.pageTitle": "文書を編集",
     "edit.save": "変更を保存",
     "edit.saving": "保存中...",
     "edit.deleteDocument": "文書を削除",
-    "edit.deleteConfirm": "「{title}」を完全に削除しますか？この操作は取り消せません。",
+    "edit.deleteConfirm":
+      "「{title}」を完全に削除しますか？この操作は取り消せません。",
 
     "categories.namePlaceholder": "カテゴリ名",
     "categories.create": "作成",
     "categories.delete": "削除",
-    "categories.deleteConfirm": "カテゴリ「{name}」を削除しますか？このカテゴリの文書はカテゴリなしになります。",
+    "categories.deleteConfirm":
+      "カテゴリ「{name}」を削除しますか？このカテゴリの文書はカテゴリなしになります。",
     "categories.nameRequired": "名前は必須です。",
 
     "adminList.pageTitle": "文書を管理",

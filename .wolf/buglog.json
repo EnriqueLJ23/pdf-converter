@@ -258,6 +258,278 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-02T13:08:39.933Z"
+    },
+    {
+      "id": "bug-017",
+      "timestamp": "2026-07-02T13:39:21.727Z",
+      "error_message": "Incorrect value in code",
+      "file": "docs/superpowers/plans/2026-07-02-language-toggle.md",
+      "root_cause": "Had 's stays required (only one pre-existing call site",
+      "fix": "Changed to 's stays required — its one pre-existing call site",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:39:21.727Z"
+    },
+    {
+      "id": "bug-018",
+      "timestamp": "2026-07-02T13:50:04.917Z",
+      "error_message": "Null/undefined access in ",
+      "file": "app/lib/db.server.test.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:50:04.917Z"
+    },
+    {
+      "id": "bug-019",
+      "timestamp": "2026-07-02T13:52:03.613Z",
+      "error_message": "Significant refactor of ",
+      "file": "app/lib/db.server.ts",
+      "root_cause": "14 lines replaced/restructured",
+      "fix": "Rewrote 22→28 lines (14 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:52:03.613Z"
+    },
+    {
+      "id": "bug-020",
+      "timestamp": "2026-07-02T14:01:27.491Z",
+      "error_message": "Missing await",
+      "file": "app/root.tsx",
+      "root_cause": "Async call without await — returned Promise instead of value",
+      "fix": "Added await to async call",
+      "tags": [
+        "auto-detected",
+        "async-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:01:27.491Z"
+    },
+    {
+      "id": "bug-021",
+      "timestamp": "2026-07-02T14:01:31.303Z",
+      "error_message": "Null/undefined access in ",
+      "file": "app/root.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:01:31.303Z"
+    },
+    {
+      "id": "bug-022",
+      "timestamp": "2026-07-02T14:04:56.471Z",
+      "error_message": "Incorrect value in code",
+      "file": "app/routes/documents-list.tsx",
+      "root_cause": "Had \"Buscar por título, descripción o contenido...\"",
+      "fix": "Changed to \"documents.searchPlaceholder\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:04:56.471Z"
+    },
+    {
+      "id": "bug-023",
+      "timestamp": "2026-07-02T14:06:27.974Z",
+      "error_message": "CSS fix: document",
+      "file": "app/routes/document-viewer.tsx",
+      "root_cause": "document: doc → doc, language",
+      "fix": "Changed document: doc → doc, language",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:06:27.974Z"
+    },
+    {
+      "id": "bug-024",
+      "timestamp": "2026-07-02T14:06:31.824Z",
+      "error_message": "Wrong reference: loaderData should be language",
+      "file": "app/routes/document-viewer.tsx",
+      "root_cause": "Used \"loaderData\" instead of \"language\"",
+      "fix": "Changed loaderData → language",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:06:31.824Z"
+    },
+    {
+      "id": "bug-025",
+      "timestamp": "2026-07-02T14:09:05.190Z",
+      "error_message": "CSS fix: id",
+      "file": "app/routes/admin-upload.tsx",
+      "root_cause": "id: documentId, title, description, uploadedBy: userId, categoryId → documentId, title, description, uploadedBy: userId, categoryId, language",
+      "fix": "Changed id: documentId, title, description, uploadedBy: userId, categoryId → documentId, title, description, uploadedBy: userId, categoryId, language",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 2,
+      "last_seen": "2026-07-02T14:09:23.182Z"
+    },
+    {
+      "id": "bug-026",
+      "timestamp": "2026-07-02T14:09:27.977Z",
+      "error_message": "Wrong reference: loaderData should be language",
+      "file": "app/routes/admin-upload.tsx",
+      "root_cause": "Used \"loaderData\" instead of \"language\"",
+      "fix": "Changed loaderData → language",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:09:27.977Z"
+    },
+    {
+      "id": "bug-027",
+      "timestamp": "2026-07-02T14:09:42.108Z",
+      "error_message": "Significant refactor of ",
+      "file": "app/routes/admin-upload.tsx",
+      "root_cause": "6 lines replaced/restructured",
+      "fix": "Rewrote 30→37 lines (6 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:09:42.108Z"
+    },
+    {
+      "id": "bug-028",
+      "timestamp": "2026-07-02T14:14:00.727Z",
+      "error_message": "CSS fix: error",
+      "file": "app/routes/admin-document-edit.tsx",
+      "root_cause": "error: \"El título es obligatorio.\" → t(uiLang, \"common.titleRequired\")",
+      "fix": "Changed error: \"El título es obligatorio.\" → t(uiLang, \"common.titleRequired\")",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:14:00.727Z"
+    },
+    {
+      "id": "bug-029",
+      "timestamp": "2026-07-02T14:42:22.879Z",
+      "error_message": "Wrong reference: dueja should be deja",
+      "file": "docs/superpowers/specs/2026-07-02-admin-ui-unification-design.md",
+      "root_cause": "Used \"dueja\" instead of \"deja\"",
+      "fix": "Changed dueja → deja",
+      "tags": [
+        "auto-detected",
+        "wrong-reference",
+        "md"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:42:22.879Z"
+    },
+    {
+      "id": "bug-030",
+      "timestamp": "2026-07-02T14:54:04.830Z",
+      "error_message": "Null/undefined access in ",
+      "file": "app/lib/db.server.test.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:54:04.830Z"
+    },
+    {
+      "id": "bug-031",
+      "timestamp": "2026-07-02T14:57:33.482Z",
+      "error_message": "Incorrect value in code",
+      "file": "app/routes/documents-list.tsx",
+      "root_cause": "Had \"lucide-react\"",
+      "fix": "Changed to \"react-router\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T14:57:33.482Z"
+    },
+    {
+      "id": "bug-032",
+      "timestamp": "2026-07-02T15:03:01.505Z",
+      "error_message": "Significant refactor of ",
+      "file": "app/components/AppShell.tsx",
+      "root_cause": "8 lines replaced/restructured",
+      "fix": "Rewrote 24→8 lines (8 removed)",
+      "tags": [
+        "auto-detected",
+        "refactor",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T15:03:01.505Z"
+    },
+    {
+      "id": "bug-033",
+      "timestamp": "2026-07-02T15:21:09.289Z",
+      "error_message": "CSS fix: dark",
+      "file": "app/routes/documents-list.tsx",
+      "root_cause": "dark: text-white/30\"> → text-white/50\">",
+      "fix": "Changed dark: text-white/30\"> → text-white/50\">",
+      "tags": [
+        "auto-detected",
+        "style-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T15:21:09.289Z"
     }
   ]
 }
