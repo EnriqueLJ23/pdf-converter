@@ -18,14 +18,18 @@ import {
 import { indexDocumentText } from "~/lib/index-document.server";
 import { PdfConversionError, convertPdfToPages } from "~/lib/pdf-convert.server";
 import { ensureDocumentDirs, originalPdfPath } from "~/lib/storage.server";
+import { LANGUAGE_LABELS, t } from "~/lib/i18n";
+import type { Language } from "~/lib/i18n";
+import { getLanguage } from "~/lib/language.server";
 import type { Route } from "./+types/admin-upload";
 
 const MAX_UPLOAD_BYTES = Number(process.env.MAX_UPLOAD_BYTES ?? 50 * 1024 * 1024);
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireAdmin(request);
+  const language = await getLanguage(request);
   const categories = listCategories(db);
-  return { user, categories };
+  return { user, categories, language };
 }
 
 async function storeAndConvertPdf(
@@ -34,11 +38,12 @@ async function storeAndConvertPdf(
   title: string,
   description: string | null,
   categoryId: string | null,
+  language: Language,
 ) {
   const documentId = randomUUID();
   ensureDocumentDirs(documentId);
   fs.writeFileSync(originalPdfPath(documentId), fileBytes);
-  createDocument(db, { id: documentId, title, description, uploadedBy: userId, categoryId });
+  createDocument(db, { id: documentId, title, description, uploadedBy: userId, categoryId, language });
   syncDocumentFts(db, documentId);
 
   try {
@@ -65,8 +70,10 @@ async function storeAndConvertPdf(
 
 export async function action({ request }: Route.ActionArgs) {
   const user = await requireAdmin(request);
+  const uiLang = await getLanguage(request);
   const formData = await request.formData();
   const intent = String(formData.get("intent") ?? "file");
+  const docLanguage: Language = formData.get("language") === "ja" ? "ja" : "es";
 
   if (intent === "folder") {
     // Files come from the folder-picker input, whose onChange renames each
@@ -75,7 +82,7 @@ export async function action({ request }: Route.ActionArgs) {
     // send the bare filename, dropping the directory structure.
     const files = formData.getAll("files").filter((entry): entry is File => entry instanceof File && entry.size > 0);
     if (files.length === 0) {
-      return data({ error: "Selecciona una carpeta con al menos un archivo PDF." }, { status: 400 });
+      return data({ error: t(uiLang, "upload.folderRequired") }, { status: 400 });
     }
 
     let created = 0;
@@ -97,7 +104,7 @@ export async function action({ request }: Route.ActionArgs) {
       }
 
       const categoryId = folderName ? findOrCreateCategoryByName(db, folderName).id : null;
-      const result = await storeAndConvertPdf(user.id, fileBytes, title, null, categoryId);
+      const result = await storeAndConvertPdf(user.id, fileBytes, title, null, categoryId, docLanguage);
       if (result.ok) {
         created++;
       } else {
@@ -106,7 +113,7 @@ export async function action({ request }: Route.ActionArgs) {
     }
 
     if (created === 0) {
-      return data({ error: "No se pudo subir ningún archivo PDF de la carpeta." }, { status: 400 });
+      return data({ error: t(uiLang, "upload.folderAllFailed") }, { status: 400 });
     }
     return redirect(`/admin/documentos?success=1&count=${created}${skipped ? `&skipped=${skipped}` : ""}`);
   }
@@ -117,21 +124,21 @@ export async function action({ request }: Route.ActionArgs) {
   const file = formData.get("file");
 
   if (!title) {
-    return data({ error: "El título es obligatorio." }, { status: 400 });
+    return data({ error: t(uiLang, "common.titleRequired") }, { status: 400 });
   }
   if (!(file instanceof File) || file.size === 0) {
-    return data({ error: "Selecciona un archivo PDF." }, { status: 400 });
+    return data({ error: t(uiLang, "upload.fileRequired") }, { status: 400 });
   }
   if (file.size > MAX_UPLOAD_BYTES) {
-    return data({ error: "El archivo excede el tamaño máximo permitido." }, { status: 400 });
+    return data({ error: t(uiLang, "upload.fileTooLarge") }, { status: 400 });
   }
 
   const fileBytes = Buffer.from(await file.arrayBuffer());
   if (fileBytes.subarray(0, 5).toString("ascii") !== "%PDF-") {
-    return data({ error: "El archivo no es un PDF válido." }, { status: 400 });
+    return data({ error: t(uiLang, "upload.invalidPdf") }, { status: 400 });
   }
 
-  const result = await storeAndConvertPdf(user.id, fileBytes, title, description, categoryId);
+  const result = await storeAndConvertPdf(user.id, fileBytes, title, description, categoryId, docLanguage);
   if (!result.ok) {
     return redirect("/admin/documentos?error=conversion");
   }
@@ -143,7 +150,7 @@ const inputClasses =
   "rounded-lg border border-black/10 bg-black/[0.03] p-2 text-sm outline-none focus:ring-2 focus:ring-accent-500 dark:border-white/10 dark:bg-white/[0.05]";
 
 export default function AdminUpload({ loaderData, actionData }: Route.ComponentProps) {
-  const { user, categories } = loaderData;
+  const { user, categories, language } = loaderData;
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const folderInputRef = useRef<HTMLInputElement>(null);
@@ -179,9 +186,9 @@ export default function AdminUpload({ loaderData, actionData }: Route.ComponentP
   }
 
   return (
-    <AppShell user={user}>
+    <AppShell user={user} language={language}>
       <GlassPanel className="mx-auto max-w-xl p-8">
-        <h1 className="mb-6 text-xl font-semibold tracking-tight">Subir documento</h1>
+        <h1 className="mb-6 text-xl font-semibold tracking-tight">{t(language, "upload.pageTitle")}</h1>
 
         {actionData?.error && (
           <p className="mb-4 rounded-lg bg-red-500/10 p-3 text-sm text-red-600 dark:text-red-400">
@@ -192,17 +199,17 @@ export default function AdminUpload({ loaderData, actionData }: Route.ComponentP
         <Form method="post" encType="multipart/form-data" className="flex flex-col gap-4">
           <input type="hidden" name="intent" value="file" />
           <label className="flex flex-col gap-1 text-sm">
-            Título
+            {t(language, "upload.titleLabel")}
             <input type="text" name="title" required className={inputClasses} />
           </label>
           <label className="flex flex-col gap-1 text-sm">
-            Descripción (opcional)
+            {t(language, "upload.descriptionLabel")}
             <textarea name="description" className={inputClasses} />
           </label>
           <label className="flex flex-col gap-1 text-sm">
-            Categoría (opcional)
+            {t(language, "upload.categoryLabel")}
             <select name="categoryId" defaultValue="" className={inputClasses}>
-              <option value="">Sin categoría</option>
+              <option value="">{t(language, "upload.noCategory")}</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -211,26 +218,30 @@ export default function AdminUpload({ loaderData, actionData }: Route.ComponentP
             </select>
           </label>
           <label className="flex flex-col gap-1 text-sm">
-            Archivo PDF
+            {t(language, "upload.languageLabel")}
+            <select name="language" defaultValue="es" className={inputClasses}>
+              <option value="es">{LANGUAGE_LABELS.es}</option>
+              <option value="ja">{LANGUAGE_LABELS.ja}</option>
+            </select>
+          </label>
+          <label className="flex flex-col gap-1 text-sm">
+            {t(language, "upload.fileLabel")}
             <input type="file" name="file" accept="application/pdf" required className={inputClasses} />
           </label>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Subiendo..." : "Subir"}
+            {isSubmitting ? t(language, "upload.submitting") : t(language, "upload.submit")}
           </Button>
         </Form>
       </GlassPanel>
 
       <GlassPanel className="mx-auto mt-6 max-w-xl p-8">
-        <h2 className="mb-1 text-xl font-semibold tracking-tight">Subir carpeta como categoría</h2>
-        <p className="mb-6 text-sm text-black/60 dark:text-white/50">
-          Selecciona una carpeta con archivos PDF. El nombre de la carpeta se usará como categoría
-          y cada PDF dentro se subirá con esa categoría automáticamente.
-        </p>
+        <h2 className="mb-1 text-xl font-semibold tracking-tight">{t(language, "upload.folderTitle")}</h2>
+        <p className="mb-6 text-sm text-black/60 dark:text-white/50">{t(language, "upload.folderDescription")}</p>
 
         <Form method="post" encType="multipart/form-data" className="flex flex-col gap-4">
           <input type="hidden" name="intent" value="folder" />
           <label className="flex flex-col gap-1 text-sm">
-            Carpeta
+            {t(language, "upload.folderLabel")}
             <input
               ref={folderInputRef}
               type="file"
@@ -242,14 +253,22 @@ export default function AdminUpload({ loaderData, actionData }: Route.ComponentP
               {...{ webkitdirectory: "", directory: "" }}
             />
           </label>
+          <label className="flex flex-col gap-1 text-sm">
+            {t(language, "upload.languageLabel")}
+            <select name="language" defaultValue="es" className={inputClasses}>
+              <option value="es">{LANGUAGE_LABELS.es}</option>
+              <option value="ja">{LANGUAGE_LABELS.ja}</option>
+            </select>
+          </label>
           {folderFileCount > 0 && (
             <p className="text-sm text-black/60 dark:text-white/50">
-              {folderFileCount} archivo{folderFileCount === 1 ? "" : "s"} PDF en la carpeta
-              {folderName ? ` "${folderName}"` : ""}.
+              {t(language, "upload.folderSummary")
+                .replace("{count}", String(folderFileCount))
+                .replace("{folder}", folderName || "")}
             </p>
           )}
           <Button type="submit" disabled={isSubmitting || folderFileCount === 0}>
-            {isSubmitting ? "Subiendo..." : "Subir carpeta"}
+            {isSubmitting ? t(language, "upload.submitting") : t(language, "upload.folderSubmit")}
           </Button>
         </Form>
       </GlassPanel>
