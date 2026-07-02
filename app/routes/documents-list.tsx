@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { FileText } from "lucide-react";
 import { Form, Link, useFetcher } from "react-router";
 import { AppShell } from "~/components/AppShell";
+import { DocumentThumbnail } from "~/components/DocumentThumbnail";
 import { requireUser } from "~/lib/auth.server";
 import { db, listReadyDocuments, searchReadyDocuments } from "~/lib/db.server";
 import type { DocumentSuggestion } from "~/lib/db.server";
@@ -101,17 +101,7 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
               to={`/documentos/${doc.id}`}
               className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-white/70 p-3 shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_8px_30px_rgba(0,0,0,0.06)] backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-[0_1px_0_rgba(255,255,255,0.4)_inset,0_16px_40px_rgba(0,0,0,0.1)] dark:border-white/10 dark:bg-white/[0.04] dark:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_8px_30px_rgba(0,0,0,0.5)]"
             >
-              <div className="relative mb-3 flex h-28 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-accent-500/10 to-accent-500/[0.03] dark:from-accent-400/10 dark:to-transparent">
-                <FileText
-                  size={36}
-                  strokeWidth={1.5}
-                  className="text-accent-500/60 transition-transform group-hover:scale-110 dark:text-accent-400/60"
-                />
-                <span className="absolute right-0 top-0 h-0 w-0 border-b-[16px] border-l-[16px] border-b-transparent border-l-black/[0.06] dark:border-l-white/[0.08]" />
-                <span className="absolute bottom-2 right-2 rounded bg-red-500/90 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-white">
-                  PDF
-                </span>
-              </div>
+              <DocumentThumbnail />
 
               <p className="line-clamp-2 text-sm font-medium leading-snug tracking-tight">{doc.title}</p>
 
