@@ -1,7 +1,13 @@
 # anatomy.md
 
-> Auto-maintained by OpenWolf. Last scanned: 2026-07-02T04:08:13.148Z
-> Files: 65 tracked | Anatomy hits: 0 | Misses: 0
+> Auto-maintained by OpenWolf. Last scanned: 2026-07-02T13:19:41.903Z
+> Files: 69 tracked | Anatomy hits: 0 | Misses: 0
+
+## ../../../../../JESSEN~1/AppData/Local/Temp/claude/C--Users-Jes-sEnriqueLunaJass-OneDrive---tq1-com-mx-Documents-DEV-pdf-converter/4a678a1d-35fe-47d7-863f-333f7942529c/scratchpad/
+
+- `folder-upload-test.mjs` — API routes: GET (1 endpoints) (~207 tok)
+- `seed.mts` — SCRATCH: makeReadyDoc (~721 tok)
+- `seed.ts` — SCRATCH: makeReadyDoc (~743 tok)
 
 ## ./
 
@@ -55,7 +61,7 @@
 
 - `app.css` — Styles: 4 rules, 5 vars (~226 tok)
 - `root.tsx` — links (~626 tok)
-- `routes.ts` — Declares RouteConfig (~201 tok)
+- `routes.ts` — Declares RouteConfig (~221 tok)
 
 ## app/components/
 
@@ -69,7 +75,7 @@
 - `auth.server.test.ts` — Declares cookieHeaderFor (~596 tok)
 - `auth.server.ts` — API routes: GET (4 endpoints) (~1605 tok)
 - `db.server.test.ts` — Declares db (~1864 tok)
-- `db.server.ts` — Exports DocumentStatus, IndexStatus, UserRecord, CategoryRecord + 19 more (~2981 tok)
+- `db.server.ts` — Exports DocumentStatus, IndexStatus, UserRecord, CategoryRecord + 23 more (~3357 tok)
 - `index-document.server.ts` — Exports indexDocumentText (~335 tok)
 - `keywords.server.test.ts` — Declares text (~246 tok)
 - `keywords.server.ts` — Exports extractKeywords (~429 tok)
@@ -86,11 +92,12 @@
 - `admin-categorias.tsx` — loader — renders form (~994 tok)
 - `admin-document-edit.tsx` — loader — renders form (~1274 tok)
 - `admin-documents-list.tsx` — loader (~639 tok)
-- `admin-upload.tsx` — MAX_UPLOAD_BYTES — renders form (~1495 tok)
+- `admin-upload.tsx` — MAX_UPLOAD_BYTES — renders form (~2941 tok)
 - `auth-callback.tsx` — loader (~158 tok)
 - `document-page-image.tsx` — loader (~316 tok)
-- `document-viewer.tsx` — loader (~1621 tok)
-- `documents-list.tsx` — loader — renders form (~883 tok)
+- `document-viewer.tsx` — loader (~1618 tok)
+- `documentos-sugerencias.tsx` — loader (~127 tok)
+- `documents-list.tsx` — loader — renders form (~1788 tok)
 - `home.tsx` — loader (~103 tok)
 - `login.tsx` — loader (~113 tok)
 - `logout.tsx` — loader — renders form (~301 tok)

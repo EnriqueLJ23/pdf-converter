@@ -1,4 +1,5 @@
 import Database from "better-sqlite3";
+import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -211,6 +212,15 @@ export function listCategories(conn: Database.Database): CategoryRecord[] {
   return (conn.prepare("SELECT * FROM categories ORDER BY name ASC").all() as CategoryRow[]).map(rowToCategory);
 }
 
+export function getCategoryByName(conn: Database.Database, name: string): CategoryRecord | null {
+  const row = conn.prepare("SELECT * FROM categories WHERE name = ?").get(name) as CategoryRow | undefined;
+  return row ? rowToCategory(row) : null;
+}
+
+export function findOrCreateCategoryByName(conn: Database.Database, name: string): CategoryRecord {
+  return getCategoryByName(conn, name) ?? createCategory(conn, { id: randomUUID(), name });
+}
+
 export function deleteCategory(conn: Database.Database, id: string): void {
   conn.prepare("DELETE FROM categories WHERE id = ?").run(id);
 }
@@ -318,6 +328,27 @@ export function searchReadyDocuments(conn: Database.Database, query: string): Do
     )
     .all(ftsQuery) as DocumentRow[];
   return rows.map(rowToDocument);
+}
+
+export interface DocumentSuggestion {
+  id: string;
+  title: string;
+  categoryName: string | null;
+}
+
+export function suggestReadyDocuments(conn: Database.Database, query: string, limit = 8): DocumentSuggestion[] {
+  const like = `%${query.replace(/[%_]/g, (char) => `\\${char}`)}%`;
+  const rows = conn
+    .prepare(
+      `SELECT documents.id AS id, documents.title AS title, categories.name AS category_name
+       FROM documents
+       LEFT JOIN categories ON categories.id = documents.category_id
+       WHERE documents.status = 'ready' AND documents.title LIKE ? ESCAPE '\\'
+       ORDER BY documents.title ASC
+       LIMIT ?`,
+    )
+    .all(like, limit) as { id: string; title: string; category_name: string | null }[];
+  return rows.map((row) => ({ id: row.id, title: row.title, categoryName: row.category_name }));
 }
 
 export function listReadyDocuments(conn: Database.Database): DocumentRecord[] {

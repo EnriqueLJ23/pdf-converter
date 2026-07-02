@@ -10,6 +10,7 @@ export default [
   route("admin/categorias", "routes/admin-categorias.tsx"),
   route("admin/documentos/:id", "routes/admin-document-edit.tsx"),
   route("documentos", "routes/documents-list.tsx"),
+  route("documentos/sugerencias", "routes/documentos-sugerencias.tsx"),
   route("documentos/:id", "routes/document-viewer.tsx"),
   route("documentos/:id/pagina/:n", "routes/document-page-image.tsx"),
 ] satisfies RouteConfig;

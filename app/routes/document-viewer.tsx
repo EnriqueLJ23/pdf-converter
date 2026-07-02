@@ -34,7 +34,10 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
 
   useEffect(() => {
     function blockShortcuts(event: KeyboardEvent) {
-      if ((event.ctrlKey || event.metaKey) && (event.key === "p" || event.key === "s")) {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        (event.key === "p" || event.key === "s")
+      ) {
         event.preventDefault();
       }
     }
@@ -51,9 +54,14 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
         ← Volver
       </Link>
 
-      <div className="select-none print:hidden" onContextMenu={(event) => event.preventDefault()}>
+      <div
+        className="select-none print:hidden"
+        onContextMenu={(event) => event.preventDefault()}
+      >
         <GlassPanel className="p-8">
-          <h1 className="mb-4 text-xl font-semibold tracking-tight">{pdfDocument.title}</h1>
+          <h1 className="mb-4 text-xl font-semibold tracking-tight">
+            {pdfDocument.title}
+          </h1>
 
           <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
@@ -72,7 +80,9 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
               <button
                 type="button"
                 disabled={page >= pdfDocument.pageCount}
-                onClick={() => setPage((p) => Math.min(pdfDocument.pageCount, p + 1))}
+                onClick={() =>
+                  setPage((p) => Math.min(pdfDocument.pageCount, p + 1))
+                }
                 aria-label="Página siguiente"
                 className={toolbarButtonClasses}
               >
@@ -84,7 +94,9 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
               <button
                 type="button"
                 disabled={zoom <= MIN_ZOOM}
-                onClick={() => setZoom((z) => Math.max(MIN_ZOOM, z - ZOOM_STEP))}
+                onClick={() =>
+                  setZoom((z) => Math.max(MIN_ZOOM, z - ZOOM_STEP))
+                }
                 aria-label="Reducir zoom"
                 className={toolbarButtonClasses}
               >
@@ -101,7 +113,9 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
               <button
                 type="button"
                 disabled={zoom >= MAX_ZOOM}
-                onClick={() => setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP))}
+                onClick={() =>
+                  setZoom((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP))
+                }
                 aria-label="Aumentar zoom"
                 className={toolbarButtonClasses}
               >
@@ -115,7 +129,7 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
               src={`/documentos/${pdfDocument.id}/pagina/${page}`}
               alt={`Página ${page} de ${pdfDocument.title}`}
               draggable={false}
-              className="select-none"
+              className="max-w-none select-none"
               style={{ width: `${zoom}%` }}
             />
 
@@ -133,10 +147,6 @@ export default function DocumentViewer({ loaderData }: Route.ComponentProps) {
               />
             )}
           </div>
-
-          <p className="mt-4 text-center text-xs text-black/40 dark:text-white/30">
-            Este documento es de solo lectura. La descarga y la impresión están deshabilitadas.
-          </p>
         </GlassPanel>
       </div>
     </AppShell>

@@ -146,6 +146,118 @@
       "related_bugs": [],
       "occurrences": 1,
       "last_seen": "2026-07-01T22:15:00.000Z"
+    },
+    {
+      "id": "bug-010",
+      "timestamp": "2026-07-02T13:01:19.900Z",
+      "error_message": "Incorrect value in code",
+      "file": "app/routes/document-viewer.tsx",
+      "root_cause": "Had \"select-none\"",
+      "fix": "Changed to \"max-w-none select-none\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:01:19.900Z"
+    },
+    {
+      "id": "bug-011",
+      "timestamp": "2026-07-02T13:02:39.899Z",
+      "error_message": "Null/undefined access in ",
+      "file": "app/lib/db.server.ts",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:02:39.899Z"
+    },
+    {
+      "id": "bug-012",
+      "timestamp": "2026-07-02T13:04:29.902Z",
+      "error_message": "Type error",
+      "file": "app/routes/admin-upload.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:04:29.902Z"
+    },
+    {
+      "id": "bug-013",
+      "timestamp": "2026-07-02T13:05:05.246Z",
+      "error_message": "Null/undefined access in ",
+      "file": "app/routes/admin-upload.tsx",
+      "root_cause": "Property access on potentially null/undefined value",
+      "fix": "Added null safety (optional chaining or null check)",
+      "tags": [
+        "auto-detected",
+        "null-safety",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:05:05.246Z"
+    },
+    {
+      "id": "bug-014",
+      "timestamp": "2026-07-02T13:06:58.364Z",
+      "error_message": "Wrong return value",
+      "file": "app/lib/db.server.ts",
+      "root_cause": "Was returning: (",
+      "fix": "Now returns: rows.map((row) => ({ id: row.id, title: row.title,",
+      "tags": [
+        "auto-detected",
+        "return-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:06:58.364Z"
+    },
+    {
+      "id": "bug-015",
+      "timestamp": "2026-07-02T13:07:42.939Z",
+      "error_message": "Incorrect value in code",
+      "file": "app/routes.ts",
+      "root_cause": "Had \"documentos/:id\"",
+      "fix": "Changed to \"documentos/sugerencias\"",
+      "tags": [
+        "auto-detected",
+        "wrong-value",
+        "ts"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:07:42.939Z"
+    },
+    {
+      "id": "bug-016",
+      "timestamp": "2026-07-02T13:08:39.933Z",
+      "error_message": "Type error",
+      "file": "app/routes/documents-list.tsx",
+      "root_cause": "Missing or incorrect type annotation",
+      "fix": "Added type assertion/annotation",
+      "tags": [
+        "auto-detected",
+        "type-fix",
+        "tsx"
+      ],
+      "related_bugs": [],
+      "occurrences": 1,
+      "last_seen": "2026-07-02T13:08:39.933Z"
     }
   ]
 }
