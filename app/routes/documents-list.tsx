@@ -5,17 +5,20 @@ import { AppShell } from "~/components/AppShell";
 import { requireUser } from "~/lib/auth.server";
 import { db, listReadyDocuments, searchReadyDocuments } from "~/lib/db.server";
 import type { DocumentSuggestion } from "~/lib/db.server";
+import { t } from "~/lib/i18n";
+import { getLanguage } from "~/lib/language.server";
 import type { Route } from "./+types/documents-list";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await requireUser(request);
+  const language = await getLanguage(request);
   const query = new URL(request.url).searchParams.get("q")?.trim() ?? "";
-  const documents = query ? searchReadyDocuments(db, query) : listReadyDocuments(db);
-  return { user, documents, query };
+  const documents = query ? searchReadyDocuments(db, query, language) : listReadyDocuments(db, language);
+  return { user, documents, query, language };
 }
 
 export default function DocumentsList({ loaderData }: Route.ComponentProps) {
-  const { user, documents, query } = loaderData;
+  const { user, documents, query, language } = loaderData;
   const [inputValue, setInputValue] = useState(query);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsFetcher = useFetcher<{ suggestions: DocumentSuggestion[] }>();
@@ -46,8 +49,8 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
   const suggestions = inputValue.trim() ? (suggestionsFetcher.data?.suggestions ?? []) : [];
 
   return (
-    <AppShell user={user}>
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight">Documentos</h1>
+    <AppShell user={user} language={language}>
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight">{t(language, "documents.title")}</h1>
 
       <div ref={searchBoxRef} className="relative mb-8">
         <Form method="get" onSubmit={() => setShowSuggestions(false)}>
@@ -58,7 +61,7 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
             onChange={handleInputChange}
             onFocus={() => setShowSuggestions(true)}
             autoComplete="off"
-            placeholder="Buscar por título, descripción o contenido..."
+            placeholder={t(language, "documents.searchPlaceholder")}
             className="w-full rounded-lg border border-black/10 bg-black/[0.03] p-3 text-sm outline-none focus:ring-2 focus:ring-accent-500 dark:border-white/10 dark:bg-white/[0.05]"
           />
         </Form>
@@ -86,7 +89,9 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
 
       {documents.length === 0 ? (
         <p className="text-black/60 dark:text-white/50">
-          {query ? `No se encontraron documentos para «${query}».` : "Todavía no hay documentos disponibles."}
+          {query
+            ? t(language, "documents.emptyQuery").replace("{query}", query)
+            : t(language, "documents.emptyNoQuery")}
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -119,7 +124,8 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
               </div>
 
               <p className="mt-auto pt-2 text-xs text-black/40 dark:text-white/30">
-                {doc.pageCount} página{doc.pageCount === 1 ? "" : "s"}
+                {doc.pageCount}{" "}
+                {doc.pageCount === 1 ? t(language, "common.pageSingular") : t(language, "common.pagePlural")}
               </p>
             </Link>
           ))}
