@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Form, Link, useFetcher } from "react-router";
+import { Form, Link, useFetcher, useSubmit } from "react-router";
 import { AppShell } from "~/components/AppShell";
 import { DocumentThumbnail } from "~/components/DocumentThumbnail";
 import { requireUser } from "~/lib/auth.server";
@@ -22,6 +22,7 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
   const [inputValue, setInputValue] = useState(query);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsFetcher = useFetcher<{ suggestions: DocumentSuggestion[] }>();
+  const submit = useSubmit();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const searchBoxRef = useRef<HTMLDivElement>(null);
 
@@ -40,10 +41,12 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
     setInputValue(value);
     setShowSuggestions(true);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!value.trim()) return;
     debounceRef.current = setTimeout(() => {
-      suggestionsFetcher.load(`/documentos/sugerencias?q=${encodeURIComponent(value)}`);
-    }, 200);
+      submit({ q: value }, { method: "get", replace: true });
+      if (value.trim()) {
+        suggestionsFetcher.load(`/documentos/sugerencias?q=${encodeURIComponent(value)}`);
+      }
+    }, 300);
   }
 
   const suggestions = inputValue.trim() ? (suggestionsFetcher.data?.suggestions ?? []) : [];
@@ -53,7 +56,13 @@ export default function DocumentsList({ loaderData }: Route.ComponentProps) {
       <h1 className="mb-6 text-2xl font-semibold tracking-tight">{t(language, "documents.title")}</h1>
 
       <div ref={searchBoxRef} className="relative mb-8">
-        <Form method="get" onSubmit={() => setShowSuggestions(false)}>
+        <Form
+          method="get"
+          onSubmit={() => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+            setShowSuggestions(false);
+          }}
+        >
           <input
             type="search"
             name="q"
